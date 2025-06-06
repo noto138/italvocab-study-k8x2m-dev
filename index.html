@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Italian Vocab Practice</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSXRhbGlhbiBWb2NhYiBQcmFjdGljZSIsInNob3J0X25hbWUiOiJJdGFsaWFuVm9jYWIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzJlN2QzMiIsInRoZW1lX2NvbG9yIjoiIzJlN2QzMiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhZMmx5WTJ4bElHTjRQU0kyTUNJZ1kzazlJall3SWlCeVBTSTBNQ0lnWm1sc2JEMGlJekpsTnpRek1pSXZQangwWlhoMElIZ3lQU0kyTUNJZ2VUSTlJelFpSUhOMGVXeGxQU0ptYVd4c09pTjNhR2wwWlR0bWIyNTBMWE5wZW1VNk1UTndlQ0lnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJK1NVUkJQQzkwWlhoMFBqd3ZjM1puUGc9PSIsInNpemVzIjoiMTIweDEyMCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSXRhbGlhbiBWb2NhYiBQcmFjdGljZSIsInNob3J0X25hbWUiOiJJdGFsaWFuVm9jYWIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzJlN2QzMiIsInRoZW1lX2NvbG9yIjoiIzJlN2QzMiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhZMmx5WTJ4bElHTjRQU0kyTUNJZ1kzazlJall3SWlCeVBTSTBNQ0lnWm1sc2JEMGlJekpsTnpRek1pSXZQangwWlhoMElIZ3lQU0kyTUNJZ2VUSTlJelFpSUhOMGVXeGxQU0ptYVd4c09pTjNhR2wwWlZ0bWIyNTBMWE5wZW1VNk1URndlQ0lnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJK1NVUkJQQzkwWlhoMFBqd3ZjM1puUGc9PSIsInNpemVzIjoiMTIweDEyMCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
     <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
     <style>
         * {
@@ -189,6 +189,7 @@
             display: flex;
             gap: 8px;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
 
         .add-word-input {
@@ -197,6 +198,7 @@
             border: 1px solid #dee2e6;
             border-radius: 20px;
             font-size: 0.9em;
+            min-width: 120px;
         }
 
         .add-word-btn {
@@ -280,7 +282,6 @@
             cursor: pointer;
         }
 
-
         .speaker-icon {
             cursor: pointer;
             margin: 0 5px;
@@ -342,6 +343,8 @@
             color: #721c24;
             display: block;
         }
+
+        .gender-hint-section {
             margin-top: 20px;
             text-align: center;
         }
@@ -379,6 +382,8 @@
             border: 2px solid #3498db;
             color: #2980b9;
         }
+
+        @media (max-width: 600px) {
             .container {
                 padding: 15px;
             }
@@ -491,8 +496,14 @@
                         </div>
                         <div class="word-list" id="nounList"></div>
                         <div class="add-word-form">
-                            <input type="text" class="add-word-input" id="newNoun" placeholder="Add new noun...">
-                            <button class="add-word-btn" onclick="addWord('nouns', 'newNoun')">Add</button>
+                            <input type="text" class="add-word-input" id="newNoun" placeholder="Italian word (e.g., casa)">
+                            <select class="add-word-input" id="nounGender" style="width: auto;">
+                                <option value="">Gender</option>
+                                <option value="m">Masculine (m)</option>
+                                <option value="f">Feminine (f)</option>
+                            </select>
+                            <input type="text" class="add-word-input" id="nounTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('nouns')">Add</button>
                         </div>
                     </div>
 
@@ -503,8 +514,9 @@
                         </div>
                         <div class="word-list" id="verbList"></div>
                         <div class="add-word-form">
-                            <input type="text" class="add-word-input" id="newVerb" placeholder="Add new verb...">
-                            <button class="add-word-btn" onclick="addWord('verbs', 'newVerb')">Add</button>
+                            <input type="text" class="add-word-input" id="newVerb" placeholder="Italian verb (e.g., mangiare)">
+                            <input type="text" class="add-word-input" id="verbTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('verbs')">Add</button>
                         </div>
                     </div>
 
@@ -515,8 +527,9 @@
                         </div>
                         <div class="word-list" id="adjectiveList"></div>
                         <div class="add-word-form">
-                            <input type="text" class="add-word-input" id="newAdjective" placeholder="Add new adjective...">
-                            <button class="add-word-btn" onclick="addWord('adjectives', 'newAdjective')">Add</button>
+                            <input type="text" class="add-word-input" id="newAdjective" placeholder="Italian adjective (e.g., bello)">
+                            <input type="text" class="add-word-input" id="adjectiveTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('adjectives')">Add</button>
                         </div>
                     </div>
 
@@ -527,8 +540,9 @@
                         </div>
                         <div class="word-list" id="adverbList"></div>
                         <div class="add-word-form">
-                            <input type="text" class="add-word-input" id="newAdverb" placeholder="Add new adverb...">
-                            <button class="add-word-btn" onclick="addWord('adverbs', 'newAdverb')">Add</button>
+                            <input type="text" class="add-word-input" id="newAdverb" placeholder="Italian adverb (e.g., velocemente)">
+                            <input type="text" class="add-word-input" id="adverbTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('adverbs')">Add</button>
                         </div>
                     </div>
                 </div>
@@ -4208,14 +4222,11 @@
                 }
         };
 
-
-
         // Function to pronounce Italian words using ResponsiveVoice
         function pronounceWord(word) {
-            // Check if ResponsiveVoice is loaded
             if (typeof responsiveVoice !== 'undefined') {
                 responsiveVoice.speak(word, "Italian Male", {
-                    rate: 0.95,  // Slightly slower for language learning
+                    rate: 0.95,
                     pitch: 1,
                     volume: 1
                 });
@@ -4225,45 +4236,20 @@
             }
         }
 
-
         // Current skill level and word lists
         let currentLevel = 'beginner';
         let allWordLists = {...defaultWordLists};
-        let wordLists = allWordLists[currentLevel]; // Current active word list
-        let currentSelectedWords = []; // Store current practice words for gender hints
-
-       
-
-
-        // Save words function - saves to localStorage
-        function saveWords() {
-            try {
-                localStorage.setItem('italianVocabLists', JSON.stringify(allWordLists));
-                console.log('Words saved successfully');
-            } catch (e) {
-                console.log('Could not save words:', e);
-            }
-        }
+        let wordLists = allWordLists[currentLevel];
+        let currentSelectedWords = [];
         
-        // Load saved words from localStorage
-        function loadSavedWords() {
-            try {
-                const saved = localStorage.getItem('italianVocabLists');
-                if (saved) {
-                    allWordLists = JSON.parse(saved);
-                    wordLists = allWordLists[currentLevel];
-                    updateWordCounts();
-                    updateWordLists();
-                    console.log('Loaded saved words');
-                }
-            } catch (e) {
-                console.log('Could not load saved words:', e);
-            }
-        }
+        // Custom words that appear in all difficulty levels
+        let customWords = {
+            nouns: [],
+            verbs: [],
+            adjectives: [],
+            adverbs: []
+        };
 
-
-
-        
         // Switch difficulty level
         function switchLevel() {
             const levelSelect = document.getElementById('skillLevel');
@@ -4277,6 +4263,299 @@
             console.log(`Switched to ${currentLevel} level`);
         }
 
+        // Get random words based on user selection
+        function getRandomWords() {
+            console.log('Getting random words...');
+            const selectedWords = [];
+            
+            const categories = [
+                { name: 'nouns', checkboxId: 'includeNouns', numberId: 'nounNumber', singularName: 'noun' },
+                { name: 'verbs', checkboxId: 'includeVerbs', numberId: 'verbNumber', singularName: 'verb' },
+                { name: 'adjectives', checkboxId: 'includeAdjectives', numberId: 'adjectiveNumber', singularName: 'adjective' },
+                { name: 'adverbs', checkboxId: 'includeAdverbs', numberId: 'adverbNumber', singularName: 'adverb' }
+            ];
+            
+            categories.forEach(cat => {
+                const checkbox = document.getElementById(cat.checkboxId);
+                const numberInput = document.getElementById(cat.numberId);
+                
+                if (checkbox && checkbox.checked) {
+                    // Combine built-in words with custom words for this category
+                    const builtInWords = wordLists[cat.name] || [];
+                    const customWordsForCategory = customWords[cat.name] || [];
+                    const allWords = [...builtInWords, ...customWordsForCategory];
+                    
+                    console.log(`${cat.name}: built-in=${builtInWords.length}, custom=${customWordsForCategory.length}, total=${allWords.length}`);
+                    
+                    if (allWords.length > 0) {
+                        const count = Math.min(parseInt(numberInput.value) || 1, allWords.length);
+                        const shuffled = [...allWords].sort(() => 0.5 - Math.random());
+                        
+                        for (let i = 0; i < count; i++) {
+                            const item = shuffled[i];
+                            selectedWords.push({
+                                word: typeof item === 'object' ? item.word : item,
+                                category: cat.singularName,
+                                gender: typeof item === 'object' ? item.gender : null,
+                                translation: typeof item === 'object' ? item.translation : null,
+                                isCustom: typeof item === 'object' ? item.isCustom : false
+                            });
+                        }
+                    }
+                }
+            });
+
+            currentSelectedWords = selectedWords;
+            displaySelectedWords(selectedWords);
+            
+            // Show/hide hint buttons
+            const hasNouns = selectedWords.some(item => 
+                (item.category === 'sostantivo' || item.category === 'noun') && item.gender
+            );
+            const hasAnyWords = selectedWords.length > 0;
+            
+            document.getElementById('genderHintBtn').style.display = hasNouns ? 'inline-block' : 'none';
+            document.getElementById('translationHintBtn').style.display = hasAnyWords ? 'inline-block' : 'none';
+            
+            hideGenderHints();
+            hideTranslationHints();
+        }
+
+        // Display selected words with custom word styling
+        function displaySelectedWords(words) {
+            const container = document.getElementById('selectedWords');
+            
+            if (words.length === 0) {
+                container.innerHTML = '<div class="empty-state">No words selected. Check your settings and try again.</div>';
+                return;
+            }
+
+            container.innerHTML = words.map(item => {
+                const customStyle = item.isCustom ? 'style="color: #2e7d32; font-weight: 600;"' : '';
+                const customIndicator = item.isCustom ? '⭐ ' : '';
+                
+                return `<div class="word-tag" ${customStyle}>
+                    ${customIndicator}${item.word}
+                    <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
+                    <span class="category-label">(${item.category})</span>
+                </div>`;
+            }).join('');
+        }
+
+        // Clear selected words
+        function clearWords() {
+            document.getElementById('selectedWords').innerHTML = 
+                '<div class="empty-state">Click "Get New Words" to start practicing!</div>';
+            currentSelectedWords = [];
+            document.getElementById('genderHintBtn').style.display = 'none';
+            document.getElementById('translationHintBtn').style.display = 'none';
+            hideGenderHints();
+            hideTranslationHints();
+        }
+
+        // Show gender hints for nouns
+        function showGenderHints() {
+            const genderHints = document.getElementById('genderHints');
+            const nounsWithGender = currentSelectedWords.filter(item => 
+                (item.category === 'sostantivo' || item.category === 'noun') && item.gender
+            );
+            
+            if (nounsWithGender.length === 0) {
+                genderHints.innerHTML = '<div class="empty-state">No nouns with gender info available</div>';
+                return;
+            }
+            
+            const hintsHtml = nounsWithGender.map(item => {
+                const genderText = item.gender === 'f' ? 'feminine' : 'masculine';
+                const genderClass = item.gender === 'f' ? 'feminine' : 'masculine';
+                return `<div class="gender-hint-item ${genderClass}">${item.word} - ${genderText}</div>`;
+            }).join('');
+            
+            genderHints.innerHTML = hintsHtml;
+        }
+
+        function hideGenderHints() {
+            document.getElementById('genderHints').innerHTML = 
+                '<div class="empty-state">Gender hints will appear here when you click the button below</div>';
+        }
+
+        // Show translation hints for all words
+        function showTranslationHints() {
+            const translationHints = document.getElementById('translationHints');
+            
+            if (currentSelectedWords.length === 0) {
+                translationHints.innerHTML = '<div class="empty-state">No words available for translation</div>';
+                return;
+            }
+            
+            const hintsHtml = currentSelectedWords.map(item => {
+                const translation = item.translation || '(translation not available)';
+                return `<div class="translation-hint-item">${item.word} - ${translation}</div>`;
+            }).join('');
+            
+            translationHints.innerHTML = hintsHtml;
+        }
+
+        function hideTranslationHints() {
+            document.getElementById('translationHints').innerHTML = 
+                '<div class="empty-state">English translations will appear here when you click the button below</div>';
+        }
+
+        // Add new custom word to a category
+        function addCustomWord(category) {
+            let word, translation, gender = null;
+            
+            if (category === 'nouns') {
+                word = document.getElementById('newNoun').value.trim().toLowerCase();
+                translation = document.getElementById('nounTranslation').value.trim();
+                gender = document.getElementById('nounGender').value;
+                
+                if (!word || !translation || !gender) {
+                    alert('Please fill in all fields for the noun (word, gender, and translation).');
+                    return;
+                }
+            } else if (category === 'verbs') {
+                word = document.getElementById('newVerb').value.trim().toLowerCase();
+                translation = document.getElementById('verbTranslation').value.trim();
+                
+                if (!word || !translation) {
+                    alert('Please fill in both the verb and its translation.');
+                    return;
+                }
+            } else if (category === 'adjectives') {
+                word = document.getElementById('newAdjective').value.trim().toLowerCase();
+                translation = document.getElementById('adjectiveTranslation').value.trim();
+                
+                if (!word || !translation) {
+                    alert('Please fill in both the adjective and its translation.');
+                    return;
+                }
+            } else if (category === 'adverbs') {
+                word = document.getElementById('newAdverb').value.trim().toLowerCase();
+                translation = document.getElementById('adverbTranslation').value.trim();
+                
+                if (!word || !translation) {
+                    alert('Please fill in both the adverb and its translation.');
+                    return;
+                }
+            }
+            
+            // Check if word already exists in custom words
+            const existingWord = customWords[category].find(item => 
+                (typeof item === 'object' ? item.word : item) === word
+            );
+            
+            if (existingWord) {
+                alert('This word is already in your custom word list.');
+                return;
+            }
+            
+            // Add the word to custom words
+            if (category === 'nouns') {
+                customWords[category].push({word: word, gender: gender, translation: translation, isCustom: true});
+                // Clear form
+                document.getElementById('newNoun').value = '';
+                document.getElementById('nounGender').value = '';
+                document.getElementById('nounTranslation').value = '';
+            } else {
+                customWords[category].push({word: word, translation: translation, isCustom: true});
+                // Clear form
+                if (category === 'verbs') {
+                    document.getElementById('newVerb').value = '';
+                    document.getElementById('verbTranslation').value = '';
+                } else if (category === 'adjectives') {
+                    document.getElementById('newAdjective').value = '';
+                    document.getElementById('adjectiveTranslation').value = '';
+                } else if (category === 'adverbs') {
+                    document.getElementById('newAdverb').value = '';
+                    document.getElementById('adverbTranslation').value = '';
+                }
+            }
+            
+            saveCustomWords();
+            updateWordLists();
+            updateWordCounts();
+            
+            console.log(`Added custom ${category.slice(0, -1)}: ${word} (${translation})`);
+        }
+
+        // Remove custom word from category
+        function removeCustomWord(category, word) {
+            customWords[category] = customWords[category].filter(item => 
+                (typeof item === 'object' ? item.word : item) !== word);
+            saveCustomWords();
+            updateWordLists();
+            updateWordCounts();
+        }
+
+        // Update word lists display
+        function updateWordLists() {
+            Object.keys(wordLists).forEach(category => {
+                const listElement = document.getElementById(`${category.slice(0, -1)}List`);
+                const countElement = document.getElementById(`${category.slice(0, -1)}CountManage`);
+                
+                // Combine built-in and custom words for display
+                const builtInWords = wordLists[category] || [];
+                const customWordsForCategory = customWords[category] || [];
+                const allWords = [...builtInWords, ...customWordsForCategory];
+                
+                listElement.innerHTML = allWords.map(item => {
+                    const word = typeof item === 'object' ? item.word : item;
+                    const isCustom = typeof item === 'object' && item.isCustom;
+                    const customStyle = isCustom ? 'style="color: #2e7d32; font-weight: 600;"' : '';
+                    const customIndicator = isCustom ? '⭐ ' : '';
+                    
+                    return `<div class="word-item" ${customStyle}>
+                        ${customIndicator}${word}
+                        ${isCustom ? `<span class="remove-word" onclick="removeCustomWord('${category}', '${word}')">×</span>` : ''}
+                    </div>`;
+                }).join('');
+                
+                // Show total count (built-in + custom)
+                const customCount = customWordsForCategory.length;
+                const builtInCount = builtInWords.length;
+                countElement.textContent = `${allWords.length} words` + 
+                    (customCount > 0 ? ` (${customCount} custom)` : '');
+            });
+        }
+
+        // Update word counts in practice tab
+        function updateWordCounts() {
+            // Count built-in words + custom words for each category
+            const totalNouns = (wordLists.nouns?.length || 0) + (customWords.nouns?.length || 0);
+            const totalVerbs = (wordLists.verbs?.length || 0) + (customWords.verbs?.length || 0);
+            const totalAdjectives = (wordLists.adjectives?.length || 0) + (customWords.adjectives?.length || 0);
+            const totalAdverbs = (wordLists.adverbs?.length || 0) + (customWords.adverbs?.length || 0);
+            
+            document.getElementById('nounCount').textContent = totalNouns;
+            document.getElementById('verbCount').textContent = totalVerbs;
+            document.getElementById('adjectiveCount').textContent = totalAdjectives;
+            document.getElementById('adverbCount').textContent = totalAdverbs;
+        }
+
+        // Save custom words function - saves to localStorage
+        function saveCustomWords() {
+            try {
+                localStorage.setItem('italianCustomWords', JSON.stringify(customWords));
+                console.log('Custom words saved successfully');
+            } catch (e) {
+                console.log('Could not save custom words:', e);
+            }
+        }
+        
+        // Load saved custom words from localStorage
+        function loadSavedCustomWords() {
+            try {
+                const saved = localStorage.getItem('italianCustomWords');
+                if (saved) {
+                    customWords = JSON.parse(saved);
+                    console.log('Loaded saved custom words');
+                }
+            } catch (e) {
+                console.log('Could not load saved custom words:', e);
+            }
+        }
+
         // Load JSON file with word lists
         function loadJSONFile(event) {
             const file = event.target.files[0];
@@ -4287,14 +4566,12 @@
                 try {
                     const jsonData = JSON.parse(e.target.result);
                     
-                    // Validate JSON structure
                     if (validateJSONStructure(jsonData)) {
                         allWordLists = {...allWordLists, ...jsonData};
                         wordLists = allWordLists[currentLevel];
                         updateWordCounts();
                         updateWordLists();
                         showImportStatus('JSON file loaded successfully!', 'success');
-                        saveWords();
                     } else {
                         showImportStatus('Invalid JSON structure. Please check the format.', 'error');
                     }
@@ -4310,11 +4587,9 @@
             const requiredLevels = ['beginner', 'intermediate', 'advanced'];
             const requiredCategories = ['nouns', 'verbs', 'adjectives', 'adverbs'];
             
-            // Check if at least one level exists
             const hasValidLevel = requiredLevels.some(level => data[level]);
             if (!hasValidLevel) return false;
             
-            // Check structure of existing levels
             for (const level in data) {
                 if (typeof data[level] !== 'object') return false;
                 
@@ -4339,90 +4614,48 @@
             }, 5000);
         }
 
-
-
-// Download sample JSON file with translations
-function downloadSampleJSON() {
-    const sampleWithTranslations = {
-        "beginner": {
-            "nouns": [
-                {"word": "casa", "gender": "f", "translation": "house"},
-                {"word": "amico", "gender": "m", "translation": "friend"},
-                {"word": "libro", "gender": "m", "translation": "book"}
-            ],
-            "verbs": [
-                {"word": "essere", "translation": "to be"},
-                {"word": "avere", "translation": "to have"},
-                {"word": "mangiare", "translation": "to eat"}
-            ],
-            "adjectives": [
-                {"word": "bello", "translation": "beautiful"},
-                {"word": "grande", "translation": "big"},
-                {"word": "nuovo", "translation": "new"}
-            ],
-            "adverbs": [
-                {"word": "bene", "translation": "well"},
-                {"word": "molto", "translation": "very"},
-                {"word": "sempre", "translation": "always"}
-            ]
-        },
-        "intermediate": {
-            "nouns": [
-                {"word": "università", "gender": "f", "translation": "university"},
-                {"word": "ristorante", "gender": "m", "translation": "restaurant"}
-            ],
-            "verbs": [
-                {"word": "studiare", "translation": "to study"},
-                {"word": "lavorare", "translation": "to work"}
-            ],
-            "adjectives": [
-                {"word": "interessante", "translation": "interesting"},
-                {"word": "difficile", "translation": "difficult"}
-            ],
-            "adverbs": [
-                {"word": "facilmente", "translation": "easily"},
-                {"word": "raramente", "translation": "rarely"}
-            ]
-        },
-        "advanced": {
-            "nouns": [
-                {"word": "responsabilità", "gender": "f", "translation": "responsibility"},
-                {"word": "governo", "gender": "m", "translation": "government"}
-            ],
-            "verbs": [
-                {"word": "realizzare", "translation": "to realize"},
-                {"word": "organizzare", "translation": "to organize"}
-            ],
-            "adjectives": [
-                {"word": "fondamentale", "translation": "fundamental"},
-                {"word": "tecnologico", "translation": "technological"}
-            ],
-            "adverbs": [
-                {"word": "particolarmente", "translation": "particularly"},
-                {"word": "principalmente", "translation": "mainly"}
-            ]
+        // Download sample JSON file
+        function downloadSampleJSON() {
+            const sample = {
+                "beginner": {
+                    "nouns": [
+                        {"word": "casa", "gender": "f", "translation": "house"},
+                        {"word": "amico", "gender": "m", "translation": "friend"}
+                    ],
+                    "verbs": [
+                        {"word": "essere", "translation": "to be"},
+                        {"word": "avere", "translation": "to have"}
+                    ],
+                    "adjectives": [
+                        {"word": "bello", "translation": "beautiful"},
+                        {"word": "grande", "translation": "big"}
+                    ],
+                    "adverbs": [
+                        {"word": "bene", "translation": "well"},
+                        {"word": "molto", "translation": "very"}
+                    ]
+                }
+            };
+            
+            const jsonString = JSON.stringify(sample, null, 2);
+            
+            try {
+                const blob = new Blob([jsonString], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = 'italian_vocab_sample.json';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(url);
+                
+                showImportStatus('Sample JSON downloaded!', 'success');
+            } catch (error) {
+                console.error('Download failed:', error);
+                showImportStatus('Download failed - check console', 'error');
+            }
         }
-    };
-    
-    const jsonString = JSON.stringify(sampleWithTranslations, null, 2);
-    
-    try {
-        const blob = new Blob([jsonString], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const downloadLink = document.createElement('a');
-        downloadLink.href = url;
-        downloadLink.download = 'italian_vocab_with_translations.json';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        URL.revokeObjectURL(url);
-        
-        showImportStatus('Sample JSON with translations downloaded!', 'success');
-    } catch (error) {
-        console.error('Download failed:', error);
-        showImportStatus('Download failed - check console', 'error');
-    }
-}
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
@@ -4439,242 +4672,28 @@ function downloadSampleJSON() {
             });
         });
 
-        // Get random words based on user selection
-        function getRandomWords() {
-            console.log('Getting random words...');
-            const selectedWords = [];
-            
-            // Check each category individually
-            const categories = [
-                { name: 'nouns', checkboxId: 'includeNouns', numberId: 'nounNumber', singularName: 'noun' },
-                { name: 'verbs', checkboxId: 'includeVerbs', numberId: 'verbNumber', singularName: 'verb' },
-                { name: 'adjectives', checkboxId: 'includeAdjectives', numberId: 'adjectiveNumber', singularName: 'adjective' },
-                { name: 'adverbs', checkboxId: 'includeAdverbs', numberId: 'adverbNumber', singularName: 'adverb' }
-            ];
-            
-            categories.forEach(cat => {
-                const checkbox = document.getElementById(cat.checkboxId);
-                const numberInput = document.getElementById(cat.numberId);
-                
-                console.log(`${cat.name}: checkbox=${checkbox?.checked}, words available=${wordLists[cat.name]?.length || 0}`);
-                
-                if (checkbox && checkbox.checked && wordLists[cat.name] && wordLists[cat.name].length > 0) {
-                    const count = Math.min(parseInt(numberInput.value) || 1, wordLists[cat.name].length);
-                    const shuffled = [...wordLists[cat.name]].sort(() => 0.5 - Math.random());
-                    
-                    for (let i = 0; i < count; i++) {
-                        const item = shuffled[i];
-                        selectedWords.push({
-                            word: typeof item === 'object' ? item.word : item,
-                            category: cat.singularName,
-                            gender: typeof item === 'object' ? item.gender : null,
-                            translation: typeof item === 'object' ? item.translation : null
-                        });
-                    }
-                }
-            });
-
-            console.log('Selected words:', selectedWords);
-            currentSelectedWords = selectedWords; // Store for gender hints
-            displaySelectedWords(selectedWords);
-            
-            // Show/hide hint buttons based on available words
-            const hasNouns = selectedWords.some(item => 
-                (item.category === 'sostantivo' || item.category === 'noun') && item.gender
-            );
-            const hasAnyWords = selectedWords.length > 0;
-            
-            const genderHintBtn = document.getElementById('genderHintBtn');
-            const translationHintBtn = document.getElementById('translationHintBtn');
-            
-            if (hasNouns) {
-                genderHintBtn.style.display = 'inline-block';
-            } else {
-                genderHintBtn.style.display = 'none';
-            }
-            
-            if (hasAnyWords) {
-                translationHintBtn.style.display = 'inline-block';
-            } else {
-                translationHintBtn.style.display = 'none';
-            }
-            
-            // Clear previous hints
-            hideGenderHints();
-            hideTranslationHints();
-        }
-
-        // Display selected words
-        function displaySelectedWords(words) {
-            const container = document.getElementById('selectedWords');
-            
-            if (words.length === 0) {
-                container.innerHTML = '<div class="empty-state">No words selected. Check your settings and try again.</div>';
-                return;
-            }
-
-            container.innerHTML = words.map(item => 
-                `<div class="word-tag">
-                    ${item.word}
-                    <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
-                    <span class="category-label">(${item.category})</span>
-                </div>`
-            ).join('');
-        }
-
-        // Clear selected words
-        function clearWords() {
-            document.getElementById('selectedWords').innerHTML = 
-                '<div class="empty-state">Click "Get New Words" to start practicing!</div>';
-            currentSelectedWords = [];
-            document.getElementById('genderHintBtn').style.display = 'none';
-            document.getElementById('translationHintBtn').style.display = 'none';
-            hideGenderHints();
-            hideTranslationHints();
-            
-            // Force clear any cached category data
-            console.log('Cleared all cached word data');
-        }
-
-        // Show gender hints for nouns
-        function showGenderHints() {
-            const genderHints = document.getElementById('genderHints');
-            const nounsWithGender = currentSelectedWords.filter(item => 
-                (item.category === 'sostantivo' || item.category === 'noun') && item.gender
-            );
-            
-            if (nounsWithGender.length === 0) {
-                genderHints.innerHTML = '<div class="empty-state">No nouns with gender info available</div>';
-                return;
-            }
-            
-            const hintsHtml = nounsWithGender.map(item => {
-                const genderText = item.gender === 'f' ? 'feminine' : 'masculine';
-                const genderClass = item.gender === 'f' ? 'feminine' : 'masculine';
-                return `<div class="gender-hint-item ${genderClass}">${item.word} - ${genderText}</div>`;
-            }).join('');
-            
-            genderHints.innerHTML = hintsHtml;
-        }
-
-        // Hide gender hints
-        function hideGenderHints() {
-            document.getElementById('genderHints').innerHTML = 
-                '<div class="empty-state">Gender hints will appear here when you click the button below</div>';
-        }
-
-        // Show translation hints for all words
-        function showTranslationHints() {
-            const translationHints = document.getElementById('translationHints');
-            
-            if (currentSelectedWords.length === 0) {
-                translationHints.innerHTML = '<div class="empty-state">No words available for translation</div>';
-                return;
-            }
-            
-            const hintsHtml = currentSelectedWords.map(item => {
-                const translation = item.translation || getBasicTranslation(item.word);
-                return `<div class="translation-hint-item">${item.word} - ${translation}</div>`;
-            }).join('');
-            
-            translationHints.innerHTML = hintsHtml;
-        }
-
-        // Hide translation hints
-        function hideTranslationHints() {
-            document.getElementById('translationHints').innerHTML = 
-                '<div class="empty-state">English translations will appear here when you click the button below</div>';
-        }
-
-        // Basic translation fallback for words without built-in translations
-        function getBasicTranslation(word) {
-            const basicDict = {
-                'essere': 'to be', 'avere': 'to have', 'fare': 'to do/make', 'dire': 'to say',
-                'andare': 'to go', 'molto': 'very/much', 'bene': 'well', 'sempre': 'always'
-            };
-            
-            return basicDict[word.toLowerCase()] || '(translation not available)';
-        }
-
-        // Add new word to a category
-        function addWord(category, inputId) {
-            const input = document.getElementById(inputId);
-            const word = input.value.trim().toLowerCase();
-            
-            if (word) {
-                // For nouns, we could add gender info later, for now just add as string
-                if (category === 'nouns') {
-                    if (!wordLists[category].some(item => 
-                        (typeof item === 'object' ? item.word : item) === word)) {
-                        wordLists[category].push({word: word, gender: null}); // Gender can be added later
-                        saveWords();
-                        updateWordLists();
-                        updateWordCounts();
-                        input.value = '';
-                    }
-                } else {
-                    if (!wordLists[category].includes(word)) {
-                        wordLists[category].push(word);
-                        saveWords();
-                        updateWordLists();
-                        updateWordCounts();
-                        input.value = '';
-                    }
-                }
-            }
-        }
-
-        // Remove word from category
-        function removeWord(category, word) {
-            if (category === 'nouns') {
-                wordLists[category] = wordLists[category].filter(item => 
-                    (typeof item === 'object' ? item.word : item) !== word);
-            } else {
-                wordLists[category] = wordLists[category].filter(w => w !== word);
-            }
-            saveWords();
-            updateWordLists();
-            updateWordCounts();
-        }
-
-        // Update word lists display
-        function updateWordLists() {
-            Object.keys(wordLists).forEach(category => {
-                const listElement = document.getElementById(`${category.slice(0, -1)}List`);
-                const countElement = document.getElementById(`${category.slice(0, -1)}CountManage`);
-                
-                listElement.innerHTML = wordLists[category].map(item => {
-                    const word = typeof item === 'object' ? item.word : item;
-                    return `<div class="word-item">${word}<span class="remove-word" onclick="removeWord('${category}', '${word}')">×</span></div>`;
-                }).join('');
-                
-                countElement.textContent = `${wordLists[category].length} words`;
-            });
-        }
-
-        // Update word counts in practice tab
-        function updateWordCounts() {
-            document.getElementById('nounCount').textContent = wordLists.nouns.length;
-            document.getElementById('verbCount').textContent = wordLists.verbs.length;
-            document.getElementById('adjectiveCount').textContent = wordLists.adjectives.length;
-            document.getElementById('adverbCount').textContent = wordLists.adverbs.length;
-        }
-
         // Handle Enter key in input fields
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const target = e.target;
-                if (target.id === 'newNoun') addWord('nouns', 'newNoun');
-                else if (target.id === 'newVerb') addWord('verbs', 'newVerb');
-                else if (target.id === 'newAdjective') addWord('adjectives', 'newAdjective');
-                else if (target.id === 'newAdverb') addWord('adverbs', 'newAdverb');
+                if (target.id === 'newNoun' || target.id === 'nounGender' || target.id === 'nounTranslation') {
+                    addCustomWord('nouns');
+                } else if (target.id === 'newVerb' || target.id === 'verbTranslation') {
+                    addCustomWord('verbs');
+                } else if (target.id === 'newAdjective' || target.id === 'adjectiveTranslation') {
+                    addCustomWord('adjectives');
+                } else if (target.id === 'newAdverb' || target.id === 'adverbTranslation') {
+                    addCustomWord('adverbs');
+                }
             }
         });
 
         // Initialize the app
         updateWordCounts();
         updateWordLists();
-        loadSavedWords(); // Load any saved vocabulary from localStorage
+        loadSavedCustomWords(); // Load any saved custom vocabulary from localStorage
+        updateWordCounts(); // Update counts again after loading custom words
+        updateWordLists(); // Update lists again after loading custom words
 
         // Register service worker for PWA functionality
         if ('serviceWorker' in navigator) {
