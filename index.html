@@ -306,6 +306,20 @@
         }
         
         .copy-icon:hover {
+                    transform: scale(1.2);
+                    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+                }
+        
+                .dict-icon {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 1.1em;
+            opacity: 1;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+            transition: all 0.2s;
+        }
+        
+        .dict-icon:hover {
             transform: scale(1.2);
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
         }
@@ -4276,6 +4290,12 @@
             });
         }
 
+        // Open Italian dictionary in new tab
+        function openDictionary(word) {
+            const dictionaryUrl = `https://www.dizionario-italiano.it/dizionario-italiano.php?parola=${encodeURIComponent(word)}`;
+            window.open(dictionaryUrl, '_blank');
+        }
+
         // Current skill level and word lists
         let currentLevel = 'beginner';
         let allWordLists = {...defaultWordLists};
@@ -4378,6 +4398,7 @@
                     ${customIndicator}${item.word}
                     <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
                     <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
+                    <span class="dict-icon" onclick="openDictionary('${item.word}')" title="Look up in Italian dictionary">📖</span>
                     <span class="category-label">(${item.category})</span>
                 </div>`;
             }).join('');
