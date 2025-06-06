@@ -296,6 +296,20 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
         }
 
+        .copy-icon {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 1.1em;
+            opacity: 1;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+            transition: all 0.2s;
+        }
+        
+        .copy-icon:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
+        }
+
         .import-section {
             background: #f8f9fa;
             border-radius: 10px;
@@ -4238,6 +4252,30 @@
             }
         }
 
+        // Copy word to clipboard
+        function copyToClipboard(word) {
+            navigator.clipboard.writeText(word).then(() => {
+                // Optional: Show a brief success message
+                console.log(`Copied "${word}" to clipboard`);
+                
+                // Optional: Brief visual feedback
+                const copyIcons = document.querySelectorAll('.copy-icon');
+                copyIcons.forEach(icon => {
+                    if (icon.onclick.toString().includes(word)) {
+                        const originalText = icon.textContent;
+                        icon.textContent = '✓';
+                        setTimeout(() => {
+                            icon.textContent = originalText;
+                        }, 1000);
+                    }
+                });
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+                // Fallback for older browsers
+                alert(`Copy this word: ${word}`);
+            });
+        }
+
         // Current skill level and word lists
         let currentLevel = 'beginner';
         let allWordLists = {...defaultWordLists};
@@ -4336,9 +4374,10 @@
                 const customStyle = item.isCustom ? 'style="color: #ffffff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); background: linear-gradient(45deg, #b39ddb, #9575cd);"' : '';
                 const customIndicator = item.isCustom ? '⭐ ' : '';
                 
-                return `<div class="word-tag" ${customStyle}>
+                rreturn `<div class="word-tag" ${customStyle}>
                     ${customIndicator}${item.word}
                     <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
+                    <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
                     <span class="category-label">(${item.category})</span>
                 </div>`;
             }).join('');
