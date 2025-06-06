@@ -4458,10 +4458,16 @@
                 '<div class="empty-state">Gender hints will appear here when you click the button below</div>';
         }
 
-        // Show translation hints for all words
         function showTranslationHints() {
             const translationHints = document.getElementById('translationHints');
+            const inlineTranslations = document.querySelectorAll('.inline-translation');
             
+            // Toggle inline translations
+            inlineTranslations.forEach(translation => {
+                translation.style.display = translation.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // Update the existing translation hints area
             if (currentSelectedWords.length === 0) {
                 translationHints.innerHTML = '<div class="empty-state">No words available for translation</div>';
                 return;
