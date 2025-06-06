@@ -85,6 +85,43 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.7);  /* Added stronger text shadow */
         }
 
+        .word-main-line {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .inline-gender {
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-right: 6px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .inline-gender.feminine {
+            background: rgba(231, 76, 60, 0.3);
+            color: #fff;
+            border: 1px solid rgba(231, 76, 60, 0.6);
+        }
+        
+        .inline-gender.masculine {
+            background: rgba(52, 152, 219, 0.3);
+            color: #fff;
+            border: 1px solid rgba(52, 152, 219, 0.6);
+        }
+        
+        .inline-translation {
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
         .category-label {
             font-size: 0.9em;  /* Changed from 0.8em to 0.9em */
             opacity: 0.95;     /* Changed from 0.8 to 0.95 */
@@ -4357,11 +4394,16 @@
                 const customIndicator = item.isCustom ? '⭐ ' : '';
                 
                 return `<div class="word-tag" ${customStyle}>
-                    ${customIndicator}${item.word}
-                    <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
-                    <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
-                    <span class="dict-icon" onclick="openDictionary('${item.word}')" title="Look up in Italian dictionary">📖</span>
-                    <span class="category-label">(${item.category})</span>
+                    <div class="word-main-line">
+                        ${item.gender && (item.category === 'sostantivo' || item.category === 'noun') ? 
+                            `<span class="inline-gender ${item.gender === 'f' ? 'feminine' : 'masculine'}" style="display: none;">(${item.gender})</span>` : ''}
+                        ${customIndicator}${item.word}
+                        <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
+                        <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
+                        <span class="dict-icon" onclick="openDictionary('${item.word}')" title="Look up in Italian dictionary">📖</span>
+                        <span class="category-label">(${item.category})</span>
+                    </div>
+                    ${item.translation ? `<div class="inline-translation" style="display: none;">${item.translation}</div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -4377,9 +4419,16 @@
             hideTranslationHints();
         }
 
-        // Show gender hints for nouns
         function showGenderHints() {
             const genderHints = document.getElementById('genderHints');
+            const inlineGenders = document.querySelectorAll('.inline-gender');
+            
+            // Toggle inline gender indicators
+            inlineGenders.forEach(gender => {
+                gender.style.display = gender.style.display === 'none' ? 'inline-block' : 'none';
+            });
+            
+            // Update the existing gender hints area
             const nounsWithGender = currentSelectedWords.filter(item => 
                 (item.category === 'sostantivo' || item.category === 'noun') && item.gender
             );
@@ -4399,6 +4448,12 @@
         }
 
         function hideGenderHints() {
+            // Hide inline gender indicators
+            const inlineGenders = document.querySelectorAll('.inline-gender');
+            inlineGenders.forEach(gender => {
+                gender.style.display = 'none';
+            });
+            
             document.getElementById('genderHints').innerHTML = 
                 '<div class="empty-state">Gender hints will appear here when you click the button below</div>';
         }
