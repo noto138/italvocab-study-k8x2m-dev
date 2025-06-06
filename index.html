@@ -285,13 +285,15 @@
         .speaker-icon {
             cursor: pointer;
             margin: 0 5px;
-            font-size: 0.9em;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        .speaker-icon:hover {
+            font-size: 1.1em;
             opacity: 1;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+            transition: all 0.2s;
+        }
+        
+        .speaker-icon:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.7));
         }
 
         .import-section {
@@ -4331,7 +4333,7 @@
             }
 
             container.innerHTML = words.map(item => {
-                const customStyle = item.isCustom ? 'style="color: #ffffff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3);"' : '';
+                const customStyle = item.isCustom ? 'style="color: #ffffff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); background: linear-gradient(45deg, #b39ddb, #9575cd);"' : '';
                 const customIndicator = item.isCustom ? '⭐ ' : '';
                 
                 return `<div class="word-tag" ${customStyle}>
