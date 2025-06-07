@@ -80,14 +80,54 @@
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
-            font-weight: 500;
-            font-size: 1.1em;
+            font-weight: 600;  /* Changed from 500 to 600 */
+            font-size: 1.2em;  /* Changed from 1.1em to 1.2em */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);  /* Added stronger text shadow */
         }
 
-        .category-label {
+        .word-main-line {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .inline-gender {
             font-size: 0.8em;
-            opacity: 0.8;
+            font-weight: 700;
+            margin-right: 6px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .inline-gender.feminine {
+            background: rgba(231, 76, 60, 0.3);
+            color: #fff;
+            border: 1px solid rgba(231, 76, 60, 0.6);
+        }
+        
+        .inline-gender.masculine {
+            background: rgba(52, 152, 219, 0.3);
+            color: #fff;
+            border: 1px solid rgba(52, 152, 219, 0.6);
+        }
+        
+        .inline-translation {
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .category-label {
+            font-size: 0.9em;  /* Changed from 0.8em to 0.9em */
+            opacity: 0.95;     /* Changed from 0.8 to 0.95 */
             margin-left: 5px;
+            font-weight: 500;  /* Added font-weight */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);  /* Added text shadow */
         }
 
         .empty-state {
@@ -273,33 +313,22 @@
             color: #495057;
         }
 
-        .level-selector select {
-            padding: 8px 15px;
-            border: 2px solid #dee2e6;
-            border-radius: 20px;
-            font-size: 1em;
-            background: white;
-            cursor: pointer;
-        }
-
-        .speaker-icon {
+        .speaker-icon, .copy-icon, .dict-icon {
             cursor: pointer;
             margin: 0 5px;
-            font-size: 0.9em;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        .speaker-icon:hover {
+            font-size: 1.2em;  /* Changed from 1.1em to 1.2em */
             opacity: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));  /* Stronger shadow */
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.2);  /* Added subtle background */
+            border-radius: 3px;  /* Added border radius */
+            padding: 2px 4px;    /* Added padding */
         }
-
-        .import-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
+        
+        .speaker-icon:hover, .copy-icon:hover, .dict-icon:hover {
+            transform: scale(1.3);  /* Changed from 1.2 to 1.3 */
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9));
+            background: rgba(255,255,255,0.3);  /* Brighter on hover */
         }
 
         .import-section h3 {
@@ -4236,6 +4265,36 @@
             }
         }
 
+        // Copy word to clipboard
+        function copyToClipboard(word) {
+            navigator.clipboard.writeText(word).then(() => {
+                // Optional: Show a brief success message
+                console.log(`Copied "${word}" to clipboard`);
+                
+                // Optional: Brief visual feedback
+                const copyIcons = document.querySelectorAll('.copy-icon');
+                copyIcons.forEach(icon => {
+                    if (icon.onclick.toString().includes(word)) {
+                        const originalText = icon.textContent;
+                        icon.textContent = '✓';
+                        setTimeout(() => {
+                            icon.textContent = originalText;
+                        }, 1000);
+                    }
+                });
+            }).catch(err => {
+                console.error('Failed to copy to clipboard:', err);
+                // Fallback for older browsers
+                alert(`Copy this word: ${word}`);
+            });
+        }
+
+        // Open Italian dictionary in new tab
+        function openDictionary(word) {
+            const dictionaryUrl = `https://www.dizionario-italiano.it/dizionario-italiano.php?parola=${encodeURIComponent(word)}`;
+            window.open(dictionaryUrl, '_blank');
+        }
+
         // Current skill level and word lists
         let currentLevel = 'beginner';
         let allWordLists = {...defaultWordLists};
@@ -4331,13 +4390,20 @@
             }
 
             container.innerHTML = words.map(item => {
-                const customStyle = item.isCustom ? 'style="color: #2e7d32; font-weight: 600;"' : '';
+                const customStyle = item.isCustom ? 'style="color: #ffffff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); background: linear-gradient(45deg, #b39ddb, #9575cd);"' : '';
                 const customIndicator = item.isCustom ? '⭐ ' : '';
                 
                 return `<div class="word-tag" ${customStyle}>
-                    ${customIndicator}${item.word}
-                    <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
-                    <span class="category-label">(${item.category})</span>
+                    <div class="word-main-line">
+                        ${item.gender && (item.category === 'sostantivo' || item.category === 'noun') ? 
+                            `<span class="inline-gender ${item.gender === 'f' ? 'feminine' : 'masculine'}" style="display: none;">(${item.gender})</span>` : ''}
+                        ${customIndicator}${item.word}
+                        <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
+                        <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
+                        <span class="dict-icon" onclick="openDictionary('${item.word}')" title="Look up in Italian dictionary">📖</span>
+                        <span class="category-label">(${item.category})</span>
+                    </div>
+                    ${item.translation ? `<div class="inline-translation" style="display: none;">${item.translation}</div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -4353,9 +4419,16 @@
             hideTranslationHints();
         }
 
-        // Show gender hints for nouns
         function showGenderHints() {
             const genderHints = document.getElementById('genderHints');
+            const inlineGenders = document.querySelectorAll('.inline-gender');
+            
+            // Toggle inline gender indicators
+            inlineGenders.forEach(gender => {
+                gender.style.display = gender.style.display === 'none' ? 'inline-block' : 'none';
+            });
+            
+            // Update the existing gender hints area
             const nounsWithGender = currentSelectedWords.filter(item => 
                 (item.category === 'sostantivo' || item.category === 'noun') && item.gender
             );
@@ -4375,14 +4448,26 @@
         }
 
         function hideGenderHints() {
+            // Hide inline gender indicators
+            const inlineGenders = document.querySelectorAll('.inline-gender');
+            inlineGenders.forEach(gender => {
+                gender.style.display = 'none';
+            });
+            
             document.getElementById('genderHints').innerHTML = 
                 '<div class="empty-state">Gender hints will appear here when you click the button below</div>';
         }
 
-        // Show translation hints for all words
         function showTranslationHints() {
             const translationHints = document.getElementById('translationHints');
+            const inlineTranslations = document.querySelectorAll('.inline-translation');
             
+            // Toggle inline translations
+            inlineTranslations.forEach(translation => {
+                translation.style.display = translation.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            // Update the existing translation hints area
             if (currentSelectedWords.length === 0) {
                 translationHints.innerHTML = '<div class="empty-state">No words available for translation</div>';
                 return;
@@ -4502,7 +4587,7 @@
                 listElement.innerHTML = allWords.map(item => {
                     const word = typeof item === 'object' ? item.word : item;
                     const isCustom = typeof item === 'object' && item.isCustom;
-                    const customStyle = isCustom ? 'style="color: #2e7d32; font-weight: 600;"' : '';
+                    const customStyle = isCustom ? 'style="color: #1565c0; font-weight: 600; background: #e3f2fd; border: 2px solid #1976d2;"' : '';
                     const customIndicator = isCustom ? '⭐ ' : '';
                     
                     return `<div class="word-item" ${customStyle}>
