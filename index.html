@@ -511,8 +511,12 @@
                         <h3>Import Word Lists</h3>
                         <p>Load JSON files with vocabulary organized by skill level</p>
                         <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="loadJSONFile(event)">
+                        <input type="file" id="customWordsInput" accept=".json" style="display: none;" onchange="loadCustomWordsFile(event)">
                         <button class="btn" onclick="document.getElementById('jsonFileInput').click()">Load JSON File</button>
                         <button class="btn btn-secondary" onclick="downloadSampleJSON()">Download Sample JSON</button>
+                        <br>
+                        <button class="btn" onclick="downloadCustomWords()" style="background: #28a745;">Backup My Custom Words</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('customWordsInput').click()">Restore Custom Words</button>
                     </div>
                     <div class="import-status" id="importStatus"></div>
                 </div>
@@ -4741,6 +4745,90 @@
                 showImportStatus('Download failed - check console', 'error');
             }
         }
+
+
+        // Download custom words as backup
+        function downloadCustomWords() {
+            if (!customWords || Object.keys(customWords).every(key => customWords[key].length === 0)) {
+                showImportStatus('No custom words to backup!', 'error');
+                return;
+            }
+            
+            const backup = {
+                timestamp: new Date().toISOString(),
+                customWords: customWords
+            };
+            
+            const jsonString = JSON.stringify(backup, null, 2);
+            
+            try {
+                const blob = new Blob([jsonString], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = `italian_custom_words_backup_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(url);
+                
+                showImportStatus('Custom words backup downloaded!', 'success');
+            } catch (error) {
+                console.error('Backup failed:', error);
+                showImportStatus('Backup failed - check console', 'error');
+            }
+        }
+
+        // Load custom words from backup file
+        function loadCustomWordsFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // Check if it's a valid backup file
+                    if (backupData.customWords && typeof backupData.customWords === 'object') {
+                        // Merge with existing custom words or replace them
+                        const shouldReplace = confirm('Do you want to REPLACE your current custom words with the backup, or MERGE them together?\n\nClick OK to REPLACE, Cancel to MERGE');
+                        
+                        if (shouldReplace) {
+                            customWords = backupData.customWords;
+                        } else {
+                            // Merge custom words
+                            Object.keys(backupData.customWords).forEach(category => {
+                                if (Array.isArray(backupData.customWords[category])) {
+                                    backupData.customWords[category].forEach(word => {
+                                        const exists = customWords[category].find(existing => 
+                                            (typeof existing === 'object' ? existing.word : existing) === 
+                                            (typeof word === 'object' ? word.word : word)
+                                        );
+                                        if (!exists) {
+                                            customWords[category].push(word);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        
+                        saveCustomWords();
+                        updateWordCounts();
+                        updateWordLists();
+                        showImportStatus('Custom words restored successfully!', 'success');
+                    } else {
+                        showImportStatus('Invalid backup file format.', 'error');
+                    }
+                } catch (error) {
+                    showImportStatus('Error reading backup file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+
+
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
