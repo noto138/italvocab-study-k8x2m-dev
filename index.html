@@ -521,6 +521,17 @@
                     <div class="import-status" id="importStatus"></div>
                 </div>
 
+                <div class="import-section">
+                    <div class="import-controls">
+                        <h3>Search Vocabulary</h3>
+                        <p>Check if a word exists in the built-in vocabulary before adding it</p>
+                        <input type="text" id="searchInput" placeholder="Enter Italian word to search..." style="padding: 10px; border: 1px solid #dee2e6; border-radius: 20px; width: 70%; margin-right: 10px;">
+                        <button class="btn" onclick="searchWord()">Search</button>
+                        <button class="btn btn-secondary" onclick="clearSearch()">Clear</button>
+                    </div>
+                    <div class="import-status" id="searchResults" style="display: none;"></div>
+                </div>
+
                 <div class="settings-section">
                     <div class="category-group">
                         <div class="category-header">
@@ -4529,12 +4540,24 @@
                 }
             }
             
+            // Auto-search for existing word before adding
+            const existingWords = searchForExistingWord(word);
+            
+            if (existingWords.length > 0) {
+                const locations = existingWords.map(r => `${r.level} ${r.category}`).join(', ');
+                const shouldContinue = confirm(`⚠️ The word "${word}" already exists in: ${locations}\n\nDo you still want to add it to your custom words?`);
+                
+                if (!shouldContinue) {
+                    return;
+                }
+            }
+            
             // Check if word already exists in custom words
-            const existingWord = customWords[category].find(item => 
+            const existingCustomWord = customWords[category].find(item => 
                 (typeof item === 'object' ? item.word : item) === word
             );
             
-            if (existingWord) {
+            if (existingCustomWord) {
                 alert('This word is already in your custom word list.');
                 return;
             }
@@ -4568,6 +4591,32 @@
             console.log(`Added custom ${category.slice(0, -1)}: ${word} (${translation})`);
         }
 
+        // Helper function to search for existing word (returns results array)
+        function searchForExistingWord(searchTerm) {
+            const results = [];
+            
+            // Search through all difficulty levels and categories
+            Object.keys(allWordLists).forEach(level => {
+                Object.keys(allWordLists[level]).forEach(category => {
+                    const words = allWordLists[level][category] || [];
+                    words.forEach(wordItem => {
+                        const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
+                        if (word.toLowerCase() === searchTerm.toLowerCase()) {
+                            results.push({
+                                word: word,
+                                level: level,
+                                category: category.slice(0, -1), // Remove 's' from category name
+                                gender: typeof wordItem === 'object' ? wordItem.gender : null,
+                                translation: typeof wordItem === 'object' ? wordItem.translation : null
+                            });
+                        }
+                    });
+                });
+            });
+            
+            return results;
+        }
+        
         // Remove custom word from category
         function removeCustomWord(category, word) {
             customWords[category] = customWords[category].filter(item => 
@@ -4828,7 +4877,116 @@
         }
 
 
+        // Search for a word in all vocabulary lists
+        function searchWord() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!searchTerm) {
+                showSearchResults('Please enter a word to search for.', 'error');
+                return;
+            }
+            
+            const results = [];
+            
+            // Search through all difficulty levels and categories
+            Object.keys(allWordLists).forEach(level => {
+                Object.keys(allWordLists[level]).forEach(category => {
+                    const words = allWordLists[level][category] || [];
+                    words.forEach(wordItem => {
+                        const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
+                        if (word.toLowerCase().includes(searchTerm)) {
+                            results.push({
+                                word: word,
+                                level: level,
+                                category: category.slice(0, -1), // Remove 's' from category name
+                                gender: typeof wordItem === 'object' ? wordItem.gender : null,
+                                translation: typeof wordItem === 'object' ? wordItem.translation : null
+                            });
+                        }
+                    });
+                });
+            });
+            
+            // Also search custom words
+            Object.keys(customWords).forEach(category => {
+                const words = customWords[category] || [];
+                words.forEach(wordItem => {
+                    const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
+                    if (word.toLowerCase().includes(searchTerm)) {
+                        results.push({
+                            word: word,
+                            level: 'custom',
+                            category: category.slice(0, -1), // Remove 's' from category name
+                            gender: typeof wordItem === 'object' ? wordItem.gender : null,
+                            translation: typeof wordItem === 'object' ? wordItem.translation : null,
+                            isCustom: true
+                        });
+                    }
+                });
+            });
+            
+            displaySearchResults(results, searchTerm);
+        }
 
+        // Display search results
+        function displaySearchResults(results, searchTerm) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                showSearchResults(`No matches found for "${searchTerm}". This word is not in any vocabulary list - you can add it as a custom word!`, 'error');
+                return;
+            }
+            
+            // Group results by word (in case same word appears in multiple levels)
+            const groupedResults = {};
+            results.forEach(result => {
+                if (!groupedResults[result.word]) {
+                    groupedResults[result.word] = [];
+                }
+                groupedResults[result.word].push(result);
+            });
+            
+            let resultsHtml = `<strong>Found ${results.length} match(es) for "${searchTerm}":</strong><br><br>`;
+            
+            Object.keys(groupedResults).forEach(word => {
+                const wordResults = groupedResults[word];
+                const firstResult = wordResults[0];
+                
+                resultsHtml += `<div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid ${firstResult.isCustom ? '#9575cd' : '#667eea'};">`;
+                resultsHtml += `<strong>${firstResult.isCustom ? '⭐ ' : ''}${word}</strong>`;
+                
+                if (firstResult.gender) {
+                    const genderColor = firstResult.gender === 'f' ? '#e74c3c' : '#3498db';
+                    resultsHtml += ` <span style="color: ${genderColor}; font-weight: bold;">(${firstResult.gender})</span>`;
+                }
+                
+                if (firstResult.translation) {
+                    resultsHtml += ` - ${firstResult.translation}`;
+                }
+                
+                resultsHtml += `<br><small style="color: #666;">`;
+                const locations = wordResults.map(r => `${r.level} ${r.category}`).join(', ');
+                resultsHtml += `Found in: ${locations}`;
+                resultsHtml += `</small></div>`;
+            });
+            
+            showSearchResults(resultsHtml, 'success');
+        }
+
+        // Show search results
+        function showSearchResults(message, type) {
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = message;
+            resultsDiv.className = `import-status ${type}`;
+            resultsDiv.style.display = 'block';
+        }
+
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').style.display = 'none';
+        }
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
@@ -4849,7 +5007,9 @@
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const target = e.target;
-                if (target.id === 'newNoun' || target.id === 'nounGender' || target.id === 'nounTranslation') {
+                if (target.id === 'searchInput') {
+                    searchWord();
+                } else if (target.id === 'newNoun' || target.id === 'nounGender' || target.id === 'nounTranslation') {
                     addCustomWord('nouns');
                 } else if (target.id === 'newVerb' || target.id === 'verbTranslation') {
                     addCustomWord('verbs');
