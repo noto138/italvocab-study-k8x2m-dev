@@ -2043,6 +2043,8 @@
         // Setup live search event listeners
         function setupLiveSearch() {
             const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            
             let searchTimeout;
             
             searchInput.addEventListener('input', (e) => {
@@ -2132,8 +2134,31 @@
             });
         }
 
+        // Set up onclick handlers for elements that use onclick attributes
+        function setupOnclickHandlers() {
+            // These functions are called by onclick attributes in HTML, so they need to be global
+            window.getRandomWords = getRandomWords;
+            window.clearWords = clearWords;
+            window.showGenderHints = showGenderHints;
+            window.showTranslationHints = showTranslationHints;
+            window.switchLevel = switchLevel;
+            window.addCustomWord = addCustomWord;
+            window.removeCustomWord = removeCustomWord;
+            window.loadJSONFile = loadJSONFile;
+            window.downloadSampleJSON = downloadSampleJSON;
+            window.downloadCustomWords = downloadCustomWords;
+            window.loadCustomWordsFile = loadCustomWordsFile;
+            window.clearSearch = clearSearch;
+            window.pronounceWord = pronounceWord;
+            window.copyToClipboard = copyToClipboard;
+            window.openDictionary = openDictionary;
+        }
+
         // Initialize the app
         function initializeApp() {
+            // Set up global functions for onclick handlers first
+            setupOnclickHandlers();
+            
             updateWordCounts();
             updateWordLists();
             loadSavedCustomWords(); // Load any saved custom vocabulary from localStorage
