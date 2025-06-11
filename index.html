@@ -185,6 +185,11 @@
             flex-wrap: wrap;
         }
 
+        .hint-controls .btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
         .settings-section {
             margin-top: 20px;
         }
@@ -778,14 +783,14 @@
                 return `<div class="word-tag" ${customStyle}>
                     <div class="word-main-line">
                         ${item.gender && (item.category === 'sostantivo' || item.category === 'noun') ? 
-                            `<span class="inline-gender ${item.gender === 'f' ? 'feminine' : 'masculine'}">(${item.gender})</span>` : ''}
+                            `<span class="inline-gender ${item.gender === 'f' ? 'feminine' : 'masculine'}" style="display: none;">(${item.gender})</span>` : ''}
                         ${customIndicator}${item.word}
                         <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
                         <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
                         <span class="dict-icon" onclick="openDictionary('${item.word}')" title="Look up in Italian dictionary">📖</span>
                         <span class="category-label">(${item.category})</span>
                     </div>
-                    ${item.translation ? `<div class="inline-translation">${item.translation}</div>` : ''}
+                    ${item.translation ? `<div class="inline-translation" style="display: none;">${item.translation}</div>` : ''}
                 </div>`;
             }).join('');
         }
