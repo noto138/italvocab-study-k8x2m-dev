@@ -4619,15 +4619,15 @@
             });
         }
 
-        // Live search functionality
+        // Live search functionality - IMPROVED VERSION
         function performLiveSearch(searchTerm) {
             if (!searchTerm || searchTerm.length < 1) {
                 hideSuggestions();
                 return;
             }
             
-            const results = [];
-            const maxResults = 50; // Limit results to keep performance good
+            const wordMap = new Map(); // Use Map to consolidate duplicate words
+            const maxResults = 50;
             
             // Search through all difficulty levels and categories
             Object.keys(allWordLists).forEach(level => {
@@ -4635,16 +4635,23 @@
                     const words = allWordLists[level][category] || [];
                     words.forEach(wordItem => {
                         const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
-                        // Only match words that START with the search term
-                        if (word.toLowerCase().startsWith(searchTerm.toLowerCase()) && results.length < maxResults) {
-                            results.push({
-                                word: word,
-                                level: level,
-                                category: category.slice(0, -1),
-                                gender: typeof wordItem === 'object' ? wordItem.gender : null,
-                                translation: typeof wordItem === 'object' ? wordItem.translation : null,
-                                isCustom: false
-                            });
+                        if (word.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+                            const key = word.toLowerCase();
+                            if (!wordMap.has(key)) {
+                                wordMap.set(key, {
+                                    word: word,
+                                    category: category.slice(0, -1), // Remove 's'
+                                    gender: typeof wordItem === 'object' ? wordItem.gender : null,
+                                    translation: typeof wordItem === 'object' ? wordItem.translation : null,
+                                    levels: [],
+                                    isCustom: false
+                                });
+                            }
+                            // Add this level to the word's levels array if not already present
+                            const wordData = wordMap.get(key);
+                            if (!wordData.levels.includes(level)) {
+                                wordData.levels.push(level);
+                            }
                         }
                     });
                 });
@@ -4655,19 +4662,28 @@
                 const words = customWords[category] || [];
                 words.forEach(wordItem => {
                     const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
-                    // Only match words that START with the search term
-                    if (word.toLowerCase().startsWith(searchTerm.toLowerCase()) && results.length < maxResults) {
-                        results.push({
-                            word: word,
-                            level: 'custom',
-                            category: category.slice(0, -1),
-                            gender: typeof wordItem === 'object' ? wordItem.gender : null,
-                            translation: typeof wordItem === 'object' ? wordItem.translation : null,
-                            isCustom: true
-                        });
+                    if (word.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+                        const key = word.toLowerCase();
+                        if (!wordMap.has(key)) {
+                            wordMap.set(key, {
+                                word: word,
+                                category: category.slice(0, -1), // Remove 's'
+                                gender: typeof wordItem === 'object' ? wordItem.gender : null,
+                                translation: typeof wordItem === 'object' ? wordItem.translation : null,
+                                levels: [],
+                                isCustom: true
+                            });
+                        }
+                        const wordData = wordMap.get(key);
+                        if (!wordData.levels.includes('custom')) {
+                            wordData.levels.push('custom');
+                        }
                     }
                 });
             });
+            
+            // Convert Map to array and sort
+            const results = Array.from(wordMap.values()).slice(0, maxResults);
             
             // Sort results: exact matches first, then by length, then alphabetically
             results.sort((a, b) => {
@@ -4682,7 +4698,7 @@
             displaySuggestions(results, searchTerm);
         }
 
-        // Display search suggestions
+        // Display search suggestions - IMPROVED VERSION
         function displaySuggestions(results, searchTerm) {
             const suggestionsContainer = document.getElementById('searchSuggestions');
             
@@ -4698,9 +4714,12 @@
                 const customClass = result.isCustom ? ' suggestion-custom' : '';
                 const customIndicator = result.isCustom ? '⭐ ' : '';
                 
-                return `<div class="suggestion-item${customClass}" onclick="selectSuggestion('${result.word.replace(/'/g, "\\'")}', '${result.level}', '${result.category}')">
+                // Format levels display: category first, then levels
+                const levelsDisplay = result.levels.length > 0 ? result.levels.join(', ') : '';
+                
+                return `<div class="suggestion-item${customClass}" onclick="selectSuggestion('${result.word.replace(/'/g, "\\'")}', '${result.levels[0]}', '${result.category}')">
                     <div class="suggestion-word">${customIndicator}${result.word}${genderDisplay}</div>
-                    <div class="suggestion-details">${result.level} ${result.category}${translationDisplay}</div>
+                    <div class="suggestion-details">${result.category} - ${levelsDisplay}${translationDisplay}</div>
                 </div>`;
             }).join('');
             
