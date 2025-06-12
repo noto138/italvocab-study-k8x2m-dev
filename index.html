@@ -332,9 +332,9 @@
 
         .custom-words-selector {
             margin-bottom: 20px;
-            padding: 15px;
+            padding: 10px 12px 8px 12px;
             border: 1px solid #dee2e6;
-            border-radius: 8px;
+            border-radius: 6px;
             background: #f8f9fa;
         }
 
@@ -519,26 +519,6 @@
                         </select>
                     </div>
 
-                    <div class="custom-words-selector">
-                        <div style="display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap;">
-                            <label style="display: flex; align-items: center; gap: 5px; font-weight: 500;">
-                                <input type="radio" name="customWordsOption" value="exclude" onchange="updateCustomWordsOption()"> 
-                                Exclude Custom Words
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px; font-weight: 500;">
-                                <input type="radio" name="customWordsOption" value="include" checked onchange="updateCustomWordsOption()"> 
-                                Include Custom Words
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 5px; font-weight: 500;">
-                                <input type="radio" name="customWordsOption" value="only" onchange="updateCustomWordsOption()"> 
-                                Custom Words Only
-                            </label>
-                        </div>
-                        <div style="text-align: center; font-size: 0.9em; color: #6c757d; margin-top: 8px;">
-                            <span id="customWordsCount">0 custom words total</span>
-                        </div>
-                    </div>
-
                     <div class="word-selection">
                         <label>
                             <input type="checkbox" id="includeNouns" checked> 
@@ -560,6 +540,26 @@
                             Avverbi (<span id="adverbCount">0</span>) - 
                             <input type="number" id="adverbNumber" value="1" min="0" max="5"> words
                         </label>
+                    </div>
+
+                    <div class="custom-words-selector">
+                        <div style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 5px;">
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em;">
+                                <input type="radio" name="customWordsOption" value="exclude" onchange="updateCustomWordsOption()"> 
+                                Exclude Custom
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em;">
+                                <input type="radio" name="customWordsOption" value="include" checked onchange="updateCustomWordsOption()"> 
+                                Include Custom
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em;">
+                                <input type="radio" name="customWordsOption" value="only" onchange="updateCustomWordsOption()"> 
+                                Custom Only
+                            </label>
+                        </div>
+                        <div style="text-align: center; font-size: 0.8em; color: #6c757d;">
+                            <span id="customWordsCount">0 custom words total</span>
+                        </div>
                     </div>
 
                     <div class="word-display">
