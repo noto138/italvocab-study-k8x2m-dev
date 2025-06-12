@@ -330,6 +330,14 @@
             text-align: center;
         }
 
+        .custom-words-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
         .level-selector label {
             font-weight: 600;
             margin-right: 10px;
@@ -509,6 +517,26 @@
                             <option value="intermediate">Intermedio (Intermediate)</option>
                             <option value="advanced">Avanzato (Advanced)</option>
                         </select>
+                    </div>
+
+                    <div class="custom-words-selector">
+                        <div style="display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: 500;">
+                                <input type="radio" name="customWordsOption" value="exclude" onchange="updateCustomWordsOption()"> 
+                                Exclude Custom Words
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: 500;">
+                                <input type="radio" name="customWordsOption" value="include" checked onchange="updateCustomWordsOption()"> 
+                                Include Custom Words
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: 500;">
+                                <input type="radio" name="customWordsOption" value="only" onchange="updateCustomWordsOption()"> 
+                                Custom Words Only
+                            </label>
+                        </div>
+                        <div style="text-align: center; font-size: 0.9em; color: #6c757d; margin-top: 8px;">
+                            <span id="customWordsCount">0 custom words total</span>
+                        </div>
                     </div>
 
                     <div class="word-selection">
@@ -4489,6 +4517,7 @@
         let allWordLists = {...defaultWordLists};
         let wordLists = allWordLists[currentLevel];
         let currentSelectedWords = [];
+        let customWordsOption = 'include'; // 'exclude', 'include', or 'only'
         
         // Custom words that appear in all difficulty levels
         let customWords = {
@@ -4498,6 +4527,21 @@
             adverbs: []
         };
 
+        // Update custom words option
+        function updateCustomWordsOption() {
+            const selectedOption = document.querySelector('input[name="customWordsOption"]:checked');
+            if (selectedOption) {
+                customWordsOption = selectedOption.value;
+                console.log(`Custom words option changed to: ${customWordsOption}`);
+            }
+        }
+
+        // Update custom words count display
+        function updateCustomWordsCount() {
+            const totalCustomWords = Object.values(customWords).reduce((total, category) => total + category.length, 0);
+            document.getElementById('customWordsCount').textContent = `${totalCustomWords} custom words total`;
+        }
+
         // Switch difficulty level
         function switchLevel() {
             const levelSelect = document.getElementById('skillLevel');
@@ -4506,6 +4550,7 @@
             
             updateWordCounts();
             updateWordLists();
+            updateCustomWordsCount();
             clearWords();
             
             console.log(`Switched to ${currentLevel} level`);
@@ -4528,8 +4573,21 @@
                 const numberInput = document.getElementById(cat.numberId);
                 
                 if (checkbox && checkbox.checked) {
-                    const builtInWords = wordLists[cat.name] || [];
-                    const customWordsForCategory = customWords[cat.name] || [];
+                    let builtInWords = [];
+                    let customWordsForCategory = [];
+                    
+                    // Determine which words to include based on custom words option
+                    if (customWordsOption === 'exclude') {
+                        builtInWords = wordLists[cat.name] || [];
+                        customWordsForCategory = [];
+                    } else if (customWordsOption === 'include') {
+                        builtInWords = wordLists[cat.name] || [];
+                        customWordsForCategory = customWords[cat.name] || [];
+                    } else if (customWordsOption === 'only') {
+                        builtInWords = [];
+                        customWordsForCategory = customWords[cat.name] || [];
+                    }
+                    
                     const allWords = [...builtInWords, ...customWordsForCategory];
                     
                     console.log(`${cat.name}: built-in=${builtInWords.length}, custom=${customWordsForCategory.length}, total=${allWords.length}`);
@@ -4959,6 +5017,8 @@
             saveCustomWords();
             updateWordLists();
             updateWordCounts();
+            updateCustomWordsCount();
+            updateCustomWordsCount();
             
             console.log(`Added custom ${category.slice(0, -1)}: ${word} (${translation})`);
         }
@@ -5232,6 +5292,7 @@
                         saveCustomWords();
                         updateWordCounts();
                         updateWordLists();
+                        updateCustomWordsCount();
                         showImportStatus('Custom words restored successfully!', 'success');
                     } else {
                         showImportStatus('Invalid backup file format.', 'error');
@@ -5357,6 +5418,7 @@
             loadSavedCustomWords(); // Load any saved custom vocabulary from localStorage
             updateWordCounts(); // Update counts again after loading custom words
             updateWordLists(); // Update lists again after loading custom words
+            updateCustomWordsCount(); // Update custom words count
             
             // Setup event handlers after DOM is ready
             setupLiveSearch(); // Setup the live search functionality
