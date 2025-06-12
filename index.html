@@ -4785,11 +4785,11 @@
             
             detailsHtml += `</h4>`;
             
-            // Interactive icons (same as practice tab)
+            // Interactive icons (same styling as practice tab)
             detailsHtml += `<div style="margin-left: auto; display: flex; gap: 8px;">`;
-            detailsHtml += `<span onclick="pronounceWord('${word}')" style="cursor: pointer; font-size: 1.2em; padding: 4px 8px; background: rgba(102, 126, 234, 0.1); border-radius: 4px; transition: all 0.2s;" title="Pronounce word">🔊</span>`;
-            detailsHtml += `<span onclick="copyToClipboard('${word}')" style="cursor: pointer; font-size: 1.2em; padding: 4px 8px; background: rgba(102, 126, 234, 0.1); border-radius: 4px; transition: all 0.2s;" title="Copy to clipboard">📋</span>`;
-            detailsHtml += `<span onclick="openDictionary('${word}')" style="cursor: pointer; font-size: 1.2em; padding: 4px 8px; background: rgba(102, 126, 234, 0.1); border-radius: 4px; transition: all 0.2s;" title="Look up in dictionary">📖</span>`;
+            detailsHtml += `<span class="speaker-icon" onclick="pronounceWord('${word}')" title="Click to hear pronunciation" style="cursor: pointer; margin: 0 5px; font-size: 1.2em; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: all 0.2s; background: rgba(255,255,255,0.2); border-radius: 3px; padding: 2px 4px;">🔊</span>`;
+            detailsHtml += `<span class="copy-icon" onclick="copyToClipboard('${word}')" title="Copy word to clipboard" style="cursor: pointer; margin: 0 5px; font-size: 1.2em; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: all 0.2s; background: rgba(255,255,255,0.2); border-radius: 3px; padding: 2px 4px;">📋</span>`;
+            detailsHtml += `<span class="dict-icon" onclick="openDictionary('${word}')" title="Look up in Italian dictionary" style="cursor: pointer; margin: 0 5px; font-size: 1.2em; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: all 0.2s; background: rgba(255,255,255,0.2); border-radius: 3px; padding: 2px 4px;">📖</span>`;
             detailsHtml += `</div></div>`;
             
             // Translation
