@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Italian Vocab Practice</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSXRhbGlhbiBWb2NhYiBQcmFjdGljZSIsInNob3J0X25hbWUiOiJJdGFsaWFuVm9jYWIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzJlN2QzMiIsInRoZW1lX2NvbG9yIjoiIzJlN2QzMiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhZMmx5WTJ4bElHTjRQU0kyTUNJZ1kzazlJall3SWlCeVBTSTBNQ0lnWm1sc2JEMGlJekpsTnpRek1pSXZQangwWlhoMElIZ3lQU0kyTUNJZ2VUSTlJelFpSUhOMGVXeGxQU0ptYVd4c09pTjNhR2wwWlZ0bWIyNTBMWE5wZW1VNk1URndlQ0lnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJK1NVUkJQQzkwWlhoMFBqd3ZjM1puUGc9PSIsInNpemVzIjoiMTIweDEyMCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSXRhbGlhbiBWb2NhYiBQcmFjdGljZSIsInNob3J0X25hbWUiOiJJdGFsaWFuVm9jYWIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzJlN2QzMiIsInRoZW1lX2NvbG9yIjoiIzJlN2QzMiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhZMmx5WTJ4bElHTjRQU0kyTUNJZ1kzazlJall3SWlCeVBTSTBNQ0lnWm1sc2JEMGlJekpsTnpRek1pSXZQangwWlhoMElIZzJQU0kyTUNJZ2VUSTlJelFpSUhOMGVXeGxQU0ptYVd4c09pTjNhR2wwWlZ0bWIyNTBMWE5wZW1VNk1URndlQ0lnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJK1NVUkJQQzkwWlhoMFBqd3ZjM1puUGc9PSIsInNpemVzIjoiMTIweDEyMCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
     <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
     <style>
         * {
@@ -344,7 +344,7 @@
             color: #495057;
         }
 
-        .speaker-icon, .copy-icon, .dict-icon {
+        .speaker-icon, .copy-icon, .dict-icon, .conjugation-icon {
             cursor: pointer;
             margin: 0 5px;
             font-size: 1.2em;
@@ -356,10 +356,20 @@
             padding: 2px 4px;
         }
         
-        .speaker-icon:hover, .copy-icon:hover, .dict-icon:hover {
+        .speaker-icon:hover, .copy-icon:hover, .dict-icon:hover, .conjugation-icon:hover {
             transform: scale(1.3);
             filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9));
             background: rgba(255,255,255,0.3);
+        }
+
+        .conjugation-icon {
+            font-size: 0.7em;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 4px;
+            padding: 3px 5px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
         .import-section {
@@ -738,6 +748,7 @@
                         <li>🔊 Click the speaker icon to hear Italian pronunciation</li>
                         <li>📋 Click the clipboard icon to copy words to your clipboard</li>
                         <li>📖 Click the book icon to look up words in an Italian dictionary</li>
+                        <li>Con Click the conjugation button (for verbs) to see verb conjugations</li>
                         <li>👁️ Use hint buttons to show/hide gender markers and English translations</li>
                         <li>⭐ Add custom words that persist across all difficulty levels</li>
                         <li>🔍 Live search through all vocabulary as you type</li>
@@ -745,6 +756,7 @@
                     
                     <h4>Recent Updates:</h4>
                     <ul>
+                        <li>Added conjugation icon for verbs to view verb conjugations</li>
                         <li>Added custom words filtering options (exclude/include/only)</li>
                         <li>Improved search results to show each word only once with consolidated levels</li>
                         <li>Enhanced word management with better visual feedback</li>
@@ -2798,7 +2810,7 @@
                 {"word": "ricevuta","gender": "f","translation": "receipt"},
                 {"word": "scontrino","gender": "m","translation": "receipt"},
                 {"word": "pagamento","gender": "m","translation": "payment"},
-                {"word": "resto","gender": "m","translation": "change"},
+                {"word": "resto","gender": "m","translation": "the rest/the remainder/the change (as in money)"},
                 {"word": "sconto","gender": "m","translation": "discount"},
                 {"word": "offerta","gender": "f","translation": "offer"},
                 {"word": "promozione","gender": "f","translation": "promotion"},
@@ -4591,6 +4603,12 @@
             window.open(dictionaryUrl, '_blank');
         }
 
+        // Open Italian conjugation in new tab
+        function openConjugation(word) {
+            const conjugationUrl = `https://www.dizionario-italiano.it/dizionario-italiano-coniugazione.php?lemma=${encodeURIComponent(word.toUpperCase())}100&bc=${encodeURIComponent(word)}`;
+            window.open(conjugationUrl, '_blank');
+        }
+
         // Current skill level and word lists
         let currentLevel = 'beginner';
         let allWordLists = {...defaultWordLists};
@@ -4715,6 +4733,10 @@
                 const customStyle = item.isCustom ? 'style="color: #ffffff; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); background: linear-gradient(45deg, #b39ddb, #9575cd);"' : '';
                 const customIndicator = item.isCustom ? '⭐ ' : '';
                 
+                // Create conjugation icon only for verbs
+                const conjugationIcon = (item.category === 'verb' || item.category === 'verbo') ? 
+                    `<span class="conjugation-icon" onclick="openConjugation('${item.word}')" title="View verb conjugations">Con</span>` : '';
+                
                 return `<div class="word-tag" ${customStyle}>
                     <div class="word-main-line">
                         ${item.gender && (item.category === 'sostantivo' || item.category === 'noun') ? 
@@ -4723,6 +4745,7 @@
                         <span class="speaker-icon" onclick="pronounceWord('${item.word}')" title="Click to hear pronunciation">🔊</span>
                         <span class="copy-icon" onclick="copyToClipboard('${item.word}')" title="Copy word to clipboard">📋</span>
                         <span class="dict-icon" onclick="openDictionary('${item.word}')" title="Look up in Italian dictionary">📖</span>
+                        ${conjugationIcon}
                         <span class="category-label">(${item.category})</span>
                     </div>
                     ${item.translation ? `<div class="inline-translation" style="display: none;">${item.translation}</div>` : ''}
@@ -4928,6 +4951,12 @@
             detailsHtml += `<span class="speaker-icon" onclick="pronounceWord('${word}')" title="Click to hear pronunciation" style="cursor: pointer; margin: 0 5px; font-size: 1.2em; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: all 0.2s; background: rgba(255,255,255,0.2); border-radius: 3px; padding: 2px 4px;">🔊</span>`;
             detailsHtml += `<span class="copy-icon" onclick="copyToClipboard('${word}')" title="Copy word to clipboard" style="cursor: pointer; margin: 0 5px; font-size: 1.2em; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: all 0.2s; background: rgba(255,255,255,0.2); border-radius: 3px; padding: 2px 4px;">📋</span>`;
             detailsHtml += `<span class="dict-icon" onclick="openDictionary('${word}')" title="Look up in Italian dictionary" style="cursor: pointer; margin: 0 5px; font-size: 1.2em; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); transition: all 0.2s; background: rgba(255,255,255,0.2); border-radius: 3px; padding: 2px 4px;">📖</span>`;
+            
+            // Add conjugation icon for verbs
+            if (category === 'verb') {
+                detailsHtml += `<span class="conjugation-icon" onclick="openConjugation('${word}')" title="View verb conjugations" style="cursor: pointer; margin: 0 5px; font-size: 0.7em; background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); border-radius: 4px; padding: 3px 5px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">Con</span>`;
+            }
+            
             detailsHtml += `</div></div>`;
             
             // Translation
