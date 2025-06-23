@@ -3184,9 +3184,18 @@
             const endIndex = levelOrder.indexOf(currentLevelEnd);
             const targetLevels = levelOrder.slice(startIndex, endIndex + 1);
             
-            return words.filter(word => 
-                word.levels.some(level => targetLevels.includes(level))
-            );
+            return words.filter(word => {
+                // Check if word appears in target levels
+                const appearsInTargetLevels = word.levels.some(level => targetLevels.includes(level));
+                
+                // Check if word appears ONLY in target levels (no lower levels)
+                const hasLowerLevels = word.levels.some(level => {
+                    const levelIndex = levelOrder.indexOf(level);
+                    return levelIndex < startIndex;
+                });
+                
+                return appearsInTargetLevels && !hasLowerLevels;
+            });
         }
 
         // Update custom words option
