@@ -924,7 +924,7 @@
 
         // Set word weight with confirmation for retirement
         function setWordWeight(word, weight) {
-            if (weight === 0.0) {
+            if (weight === 0.0 || weight === 0) {
                 const confirmed = confirm(`Are you sure you want to retire "${word}"?\n\nThis word will no longer appear in practice sessions.`);
                 if (!confirmed) return;
             }
@@ -966,7 +966,7 @@
             const displayId = `weight-display-${word.replace(/[^a-zA-Z0-9]/g, '')}`;
             const display = document.getElementById(displayId);
             if (display) {
-                display.textContent = weight === 0.0 ? 'Retired' : `${weight}x`;
+                display.textContent = (weight === 0.0 || weight === 0) ? 'Retired' : `${weight}x`;
             }
         }
 
@@ -1100,9 +1100,9 @@
                             const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
                             const weight = userWordPreferences[word]?.weight || 1.0;
                             
-                            // Skip retired words
-                            if (weight === 0.0) return;
-                            
+                            // Skip retired words (checking for both 0.0 and 0)
+                            if (weight === 0.0 || weight === 0) return;
+                                                    
                             // Add word multiple times based on weight
                             const copies = Math.max(1, Math.round(weight * 10));
                             for (let j = 0; j < copies; j++) {
@@ -1178,7 +1178,7 @@
                     ${item.translation ? `<div class="inline-translation" style="display: none;">${item.translation}</div>` : ''}
                     <div class="weight-controls" id="weight-controls-${wordId}" style="display: none; margin-top: 10px; text-align: center; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 8px;">
                         <div style="margin-bottom: 8px; font-size: 0.8em; color: rgba(255,255,255,0.9);">
-                            Frequency: <span id="weight-display-${wordId}">${currentWeight === 0.0 ? 'Retired' : currentWeight + 'x'}</span>
+                            Frequency: <span id="weight-display-${wordId}">${(currentWeight === 0.0 || currentWeight === 0) ? 'Retired' : currentWeight + 'x'}</span>
                         </div>
                         <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
                             <button onclick="setWordWeight('${item.word}', 0.2)" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; border-radius: 4px; padding: 4px 6px; font-size: 0.7em; cursor: pointer;" title="Show much less often">➖➖</button>
