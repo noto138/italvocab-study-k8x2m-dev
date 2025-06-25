@@ -1098,13 +1098,20 @@
                         const weightedWords = [];
                         allWords.forEach(wordItem => {
                             const word = typeof wordItem === 'object' ? wordItem.word : wordItem;
-                            const weight = userWordPreferences[word]?.weight || 1.0;
+                            const weight = userWordPreferences[word]?.weight;
                             
-                            // Skip retired words (checking for both 0.0 and 0)
-                            if (weight === 0.0 || weight === 0) return;
-                                                    
+                            // Skip retired words (weight exactly equals 0)
+                            if (weight === 0) {
+                                console.log(`Skipping retired word: ${word}`);
+                                return;
+                            }
+                            
+                            // Use actual weight or default to 1.0
+                            const effectiveWeight = weight || 1.0;
+                            
                             // Add word multiple times based on weight
-                            const copies = Math.max(1, Math.round(weight * 10));
+                            const copies = Math.max(1, Math.round(effectiveWeight * 10));
+                            console.log(`Adding word "${word}" ${copies} times (weight: ${effectiveWeight})`);
                             for (let j = 0; j < copies; j++) {
                                 weightedWords.push(wordItem);
                             }
@@ -1116,8 +1123,17 @@
                             
                             for (let i = 0; i < count; i++) {
                                 const item = shuffled[i];
+                                const word = typeof item === 'object' ? item.word : item;
+                                
+                                // Update timesShown counter
+                                if (!userWordPreferences[word]) {
+                                    userWordPreferences[word] = { weight: 1.0, lastSeen: null, timesShown: 0 };
+                                }
+                                userWordPreferences[word].timesShown = (userWordPreferences[word].timesShown || 0) + 1;
+                                userWordPreferences[word].lastSeen = new Date().toISOString();
+                                
                                 selectedWords.push({
-                                    word: typeof item === 'object' ? item.word : item,
+                                    word: word,
                                     category: cat.singularName,
                                     gender: typeof item === 'object' ? item.gender : null,
                                     translation: typeof item === 'object' ? item.translation : null,
@@ -1142,6 +1158,9 @@
             
             document.getElementById('genderHintBtn').style.display = hasNouns ? 'inline-block' : 'none';
             document.getElementById('translationHintBtn').style.display = hasAnyWords ? 'inline-block' : 'none';
+
+            // Save updated preferences
+            saveUserPreferences();
         }
 
         // Display selected words with custom word styling and weight controls
