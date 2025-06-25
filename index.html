@@ -1,4 +1,830 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italian Vocab Practice</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSXRhbGlhbiBWb2NhYiBQcmFjdGljZSIsInNob3J0X25hbWUiOiJJdGFsaWFuVm9jYWIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzJlN2QzMiIsInRoZW1lX2NvbG9yIjoiIzJlN2QzMiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhZMmx5WTJ4bElHTjRQU0kyTUNJZ1kzazlJall3SWlCeVBTSTBNQ0lnWm1sc2JEMGlJekpsTnpRek1pSXZQangwWlhoMElIZzJQU0kyTUNJZ2VUSTlJelFpSUhOMGVXeGxQU0ptYVd4c09pTjNhR2wwWlZ0bWIyNTBMWE5wZW1VNk1URndlQ0lnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJK1NVUkJQQzkwWlhoMFBqd3ZjM1puUGc9PSIsInNpemVzIjoiMTIweDEyMCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .practice-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .word-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 2px dashed #dee2e6;
+        }
+
+        .selected-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .word-tag {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.2em;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+        }
+
+        .word-main-line {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .inline-gender {
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-right: 6px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .inline-gender.feminine {
+            background: rgba(231, 76, 60, 0.3);
+            color: #fff;
+            border: 1px solid rgba(231, 76, 60, 0.6);
+        }
+        
+        .inline-gender.masculine {
+            background: rgba(52, 152, 219, 0.3);
+            color: #fff;
+            border: 1px solid rgba(52, 152, 219, 0.6);
+        }
+        
+        .inline-translation {
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .category-label {
+            font-size: 0.9em;
+            opacity: 0.95;
+            margin-left: 5px;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .empty-state {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-large {
+            flex: 2;
+            min-width: 160px;
+        }
+
+        .btn-small {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .hint-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hint-controls .btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .settings-section {
+            margin-top: 20px;
+        }
+
+        .category-group {
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .category-title {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .word-count {
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .word-item {
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+
+        .word-item:hover {
+            background: #e9ecef;
+        }
+
+        .remove-word {
+            color: #dc3545;
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .add-word-form {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-word-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            font-size: 0.9em;
+            min-width: 120px;
+        }
+
+        .add-word-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-size: 1em;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .word-selection {
+            margin-bottom: 20px;
+        }
+
+        .word-selection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .word-selection input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+        .level-selector {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .level-range-selector {
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .level-range-selector label {
+            font-weight: 600;
+            margin-right: 10px;
+            color: #495057;
+        }
+
+        .level-range-selector select {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin: 0 5px;
+            font-size: 1em;
+        }
+
+        .custom-words-selector {
+            margin-bottom: 20px;
+            padding: 10px 12px 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .speaker-icon, .copy-icon, .dict-icon, .conjugation-icon, .weight-icon {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 1.2em;
+            opacity: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+        
+        .speaker-icon:hover, .copy-icon:hover, .dict-icon:hover, .conjugation-icon:hover, .weight-icon:hover {
+            transform: scale(1.3);
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9));
+            background: rgba(255,255,255,0.3);
+        }
+
+        .conjugation-icon {
+            font-size: 0.7em;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 4px;
+            padding: 3px 5px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .weight-controls button:hover {
+            background: rgba(255,255,255,0.4) !important;
+            transform: scale(1.1);
+        }
+
+        .import-section {
+            margin-bottom: 30px;
+        }
+
+        .import-section h3 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .import-section p {
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .import-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .import-controls .btn {
+            margin: 5px;
+        }
+
+        .import-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .import-status.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+
+        .import-status.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .search-input-container {
+            position: relative;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 0.9em;
+        }
+
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-word {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .suggestion-details {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .suggestion-custom {
+            background: #e3f2fd;
+            border-left: 3px solid #1976d2;
+        }
+
+        .suggestion-item.active {
+            background: #e3f2fd;
+        }
+
+        .no-suggestions {
+            padding: 12px;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .info-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .info-section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info-section h4 {
+            color: #495057;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .info-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .info-section li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .controls, .hint-controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇮🇹 Italian Vocab</h1>
+            <p>Practice with random words</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" data-tab="practice">Practice</button>
+                <button class="tab" data-tab="manage">Manage Words</button>
+                <button class="tab" data-tab="info">Info</button>
+            </div>
+
+            <div class="tab-content active" id="practice">
+                <div class="practice-section">
+                    <div class="level-range-selector">
+                        <label>Practice words from:</label>
+                        <select id="levelStart" onchange="updateLevelRange()">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                        <span>to</span>
+                        <select id="levelEnd" onchange="updateLevelRange()">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced" selected>Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="word-selection">
+                        <label>
+                            <input type="checkbox" id="includeNouns" checked> 
+                            Sostantivi (<span id="nounCount">0</span>) - 
+                            <input type="number" id="nounNumber" value="1" min="0" max="5"> words
+                        </label>
+                        <label>
+                            <input type="checkbox" id="includeVerbs" checked> 
+                            Verbi (<span id="verbCount">0</span>) - 
+                            <input type="number" id="verbNumber" value="1" min="0" max="5"> words
+                        </label>
+                        <label>
+                            <input type="checkbox" id="includeAdjectives" checked> 
+                            Aggettivi (<span id="adjectiveCount">0</span>) - 
+                            <input type="number" id="adjectiveNumber" value="1" min="0" max="5"> words
+                        </label>
+                        <label>
+                            <input type="checkbox" id="includeAdverbs"> 
+                            Avverbi (<span id="adverbCount">0</span>) - 
+                            <input type="number" id="adverbNumber" value="1" min="0" max="5"> words
+                        </label>
+                    </div>
+
+                    <div class="custom-words-selector">
+                        <div style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 5px;">
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em;">
+                                <input type="radio" name="customWordsOption" value="exclude" onchange="updateCustomWordsOption()"> 
+                                Exclude Custom
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em;">
+                                <input type="radio" name="customWordsOption" value="include" checked onchange="updateCustomWordsOption()"> 
+                                Include Custom
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.9em;">
+                                <input type="radio" name="customWordsOption" value="only" onchange="updateCustomWordsOption()"> 
+                                Custom Only
+                            </label>
+                        </div>
+                        <div style="text-align: center; font-size: 0.8em; color: #6c757d;">
+                            <span id="customWordsCount">0 custom words total</span>
+                        </div>
+                    </div>
+
+                    <div class="word-display">
+                        <div class="selected-words" id="selectedWords">
+                            <div class="empty-state">Click "Get New Words" to start practicing!</div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-large" onclick="getRandomWords()">Get New Words</button>
+                        <button class="btn btn-secondary btn-small" onclick="clearWords()">Clear</button>
+                    </div>
+
+                    <div class="hint-controls">
+                        <button class="btn btn-secondary" id="genderHintBtn" onclick="showGenderHints()" style="display: none;">Show Gender Hints</button>
+                        <button class="btn btn-secondary" id="translationHintBtn" onclick="showTranslationHints()" style="display: none;">Show English Translations</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="manage">
+                <div class="import-section">
+                    <div class="import-controls">
+                        <h3>My Vocabulary Backup</h3>
+                        <p>Save and restore your custom words AND learning preferences</p>
+                        <button class="btn" onclick="downloadCompleteBackup()" style="background: #28a745;">💾 Backup Everything</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('completeBackupInput').click()">📂 Restore Everything</button>
+                        <input type="file" id="completeBackupInput" accept=".json" style="display: none;" onchange="loadCompleteBackup(event)">
+                    </div>
+                    <div class="import-status" id="importStatus"></div>
+                </div>
+
+                <div class="import-section">
+                    <div class="import-controls">
+                        <h3>Import Word Lists</h3>
+                        <p>Load JSON files with vocabulary organized by skill level</p>
+                        <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="loadJSONFile(event)">
+                        <button class="btn" onclick="document.getElementById('jsonFileInput').click()">Load JSON File</button>
+                        <button class="btn btn-secondary" onclick="downloadSampleJSON()">Download Sample JSON</button>
+                    </div>
+                </div>
+
+                <div class="import-section">
+                    <div class="import-controls">
+                        <h3>Reset Word Weights</h3>
+                        <p>Remove all frequency adjustments and un-retire all words</p>
+                        <button class="btn btn-secondary" onclick="resetAllWordWeights()">Reset All Word Weights</button>
+                    </div>
+                </div>
+
+                <div class="import-section">
+                    <div class="import-controls">
+                        <h3>Search Vocabulary</h3>
+                        <p>Type to search through all vocabulary - results appear as you type</p>
+                        <div class="search-container">
+                            <div class="search-input-container">
+                                <input type="text" id="searchInput" placeholder="Start typing an Italian word..." style="padding: 12px; border: 1px solid #dee2e6; border-radius: 8px; width: 100%; font-size: 1em;">
+                                <div class="search-suggestions" id="searchSuggestions"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="clearSearch()" style="margin-top: 10px;">Clear Search</button>
+                    </div>
+                    <div class="import-status" id="searchResults" style="display: none;"></div>
+                </div>
+
+                <div class="settings-section">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3>Add Custom Words</h3>
+                        <p style="color: #6c757d;">Use the search above to check if a word already exists before adding it as custom</p>
+                    </div>
+                    
+                    <div class="category-group">
+                        <div class="category-header">
+                            <span class="category-title">Sostantivi (Nouns)</span>
+                            <span class="word-count" id="nounCountManage">0 words</span>
+                        </div>
+                        <div style="margin-bottom: 10px; font-size: 0.9em; color: #6c757d;">
+                            Custom words only (⭐ = your additions):
+                        </div>
+                        <div class="word-list" id="nounList"></div>
+                        <div class="add-word-form">
+                            <input type="text" class="add-word-input" id="newNoun" placeholder="Italian word (e.g., casa)">
+                            <select class="add-word-input" id="nounGender" style="width: auto;">
+                                <option value="">Gender</option>
+                                <option value="m">Masculine (m)</option>
+                                <option value="f">Feminine (f)</option>
+                            </select>
+                            <input type="text" class="add-word-input" id="nounTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('nouns')">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="category-group">
+                        <div class="category-header">
+                            <span class="category-title">Verbi (Verbs)</span>
+                            <span class="word-count" id="verbCountManage">0 words</span>
+                        </div>
+                        <div style="margin-bottom: 10px; font-size: 0.9em; color: #6c757d;">
+                            Custom words only (⭐ = your additions):
+                        </div>
+                        <div class="word-list" id="verbList"></div>
+                        <div class="add-word-form">
+                            <input type="text" class="add-word-input" id="newVerb" placeholder="Italian verb (e.g., mangiare)">
+                            <input type="text" class="add-word-input" id="verbTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('verbs')">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="category-group">
+                        <div class="category-header">
+                            <span class="category-title">Aggettivi (Adjectives)</span>
+                            <span class="word-count" id="adjectiveCountManage">0 words</span>
+                        </div>
+                        <div style="margin-bottom: 10px; font-size: 0.9em; color: #6c757d;">
+                            Custom words only (⭐ = your additions):
+                        </div>
+                        <div class="word-list" id="adjectiveList"></div>
+                        <div class="add-word-form">
+                            <input type="text" class="add-word-input" id="newAdjective" placeholder="Italian adjective (e.g., bello)">
+                            <input type="text" class="add-word-input" id="adjectiveTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('adjectives')">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="category-group">
+                        <div class="category-header">
+                            <span class="category-title">Avverbi (Adverbs)</span>
+                            <span class="word-count" id="adverbCountManage">0 words</span>
+                        </div>
+                        <div style="margin-bottom: 10px; font-size: 0.9em; color: #6c757d;">
+                            Custom words only (⭐ = your additions):
+                        </div>
+                        <div class="word-list" id="adverbList"></div>
+                        <div class="add-word-form">
+                            <input type="text" class="add-word-input" id="newAdverb" placeholder="Italian adverb (e.g., velocemente)">
+                            <input type="text" class="add-word-input" id="adverbTranslation" placeholder="English translation">
+                            <button class="add-word-btn" onclick="addCustomWord('adverbs')">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="info">
+                <div class="info-section">
+                    <h3>Italian Vocab Practice - Instructions & Updates</h3>
+                    
+                    <h4>How to Use:</h4>
+                    <p>
+                        <strong>Practice Tab:</strong> Select your level range and choose which word categories you want to practice. 
+                        You can include or exclude your custom words, or practice with custom words only. Click "Get New Words" to 
+                        start practicing with randomly selected vocabulary.
+                    </p>
+                    
+                    <p>
+                        <strong>Manage Words Tab:</strong> Search through all vocabulary to see if words already exist, import/export 
+                        word lists, and add your own custom words. Custom words will appear in all difficulty levels when enabled.
+                    </p>
+                    
+                    <h4>Features:</h4>
+                    <ul>
+                        <li>🔊 Click the speaker icon to hear Italian pronunciation</li>
+                        <li>📋 Click the clipboard icon to copy words to your clipboard</li>
+                        <li>📖 Click the book icon to look up words in an Italian dictionary</li>
+                        <li>Con Click the conjugation button (for verbs) to see verb conjugations</li>
+                        <li>⚖️ Click the weight icon to adjust how often words appear</li>
+                        <li>👁️ Use hint buttons to show/hide gender markers and English translations</li>
+                        <li>⭐ Add custom words that persist across all difficulty levels</li>
+                        <li>🔍 Live search through all vocabulary as you type</li>
+                        <li>📊 Level range selector to practice specific difficulty ranges</li>
+                    </ul>
+                    
+                    <h4>Recent Updates:</h4>
+                    <ul>
+                        <li>Added word frequency weighting system</li>
+                        <li>Added ability to retire words you know well</li>
+                        <li>Enhanced backup system to include learning preferences</li>
+                        <li>Added level range selector for flexible practice</li>
+                        <li>Consolidated word structure for better organization</li>
+                        <li>Words now cascade properly through difficulty levels</li>
+                    </ul>
+                    
+                    <h4>Tips:</h4>
+                    <p>
+                        Use the level range selector to focus your practice. Click the ⚖️ icon on any word to adjust 
+                        how often it appears - reduce frequency for words you know well, or retire them completely. 
+                        The search function is great for checking if a word already exists before adding it as a custom word.
+                    </p>
+                    
+                    <p style="margin-top: 20px; font-style: italic; color: #6c757d;">
+                        Buona fortuna con i tuoi studi di italiano! (Good luck with your Italian studies!)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript will go here in the next section -->
+    <script>
         // Initialize consolidated word lists with new structure
         // PLACEHOLDER - INSERT YOUR CONSOLIDATED WORD LISTS HERE
         const consolidatedWordLists = {
@@ -1118,3 +1944,5 @@
                 .catch(err => console.log('Service Worker registration failed'));
         }
     </script>
+</body>
+</html>
