@@ -12514,7 +12514,16 @@
         });
       }
 
-      // Live search functionality - UPDATED FOR NEW STRUCTURE
+      // Add this helper function to normalize accented characters
+      function normalizeForSearch(text) {
+        return text
+          .toLowerCase()
+          .normalize("NFD") // Decompose accented characters
+          .replace(/[\u0300-\u036f]/g, "") // Remove accent marks
+          .replace(/['']/g, "'"); // Normalize different apostrophe types
+      }
+
+      // Updated performLiveSearch function
       function performLiveSearch(searchTerm) {
         if (!searchTerm || searchTerm.length < 1) {
           hideSuggestions();
@@ -12524,12 +12533,18 @@
         const wordMap = new Map(); // Use Map to consolidate duplicate words
         const maxResults = 50;
 
+        // Normalize the search term for comparison
+        const normalizedSearchTerm = normalizeForSearch(searchTerm);
+
         // Search through consolidated word lists
         Object.keys(consolidatedWordLists).forEach((category) => {
           const words = consolidatedWordLists[category] || [];
           words.forEach((wordItem) => {
             const word = wordItem.word;
-            if (word.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+            const normalizedWord = normalizeForSearch(word);
+
+            // Check if normalized word starts with normalized search term
+            if (normalizedWord.startsWith(normalizedSearchTerm)) {
               const key = word.toLowerCase();
               if (!wordMap.has(key)) {
                 wordMap.set(key, {
@@ -12551,7 +12566,10 @@
           words.forEach((wordItem) => {
             const word =
               typeof wordItem === "object" ? wordItem.word : wordItem;
-            if (word.toLowerCase().startsWith(searchTerm.toLowerCase())) {
+            const normalizedWord = normalizeForSearch(word);
+
+            // Check if normalized word starts with normalized search term
+            if (normalizedWord.startsWith(normalizedSearchTerm)) {
               const key = word.toLowerCase();
               if (!wordMap.has(key)) {
                 wordMap.set(key, {
@@ -12573,8 +12591,8 @@
 
         // Sort results: exact matches first, then by length, then alphabetically
         results.sort((a, b) => {
-          const aExact = a.word.toLowerCase() === searchTerm.toLowerCase();
-          const bExact = b.word.toLowerCase() === searchTerm.toLowerCase();
+          const aExact = normalizeForSearch(a.word) === normalizedSearchTerm;
+          const bExact = normalizeForSearch(b.word) === normalizedSearchTerm;
           if (aExact && !bExact) return -1;
           if (!aExact && bExact) return 1;
           if (a.word.length !== b.word.length)
@@ -12584,7 +12602,6 @@
 
         displaySuggestions(results, searchTerm);
       }
-
       // Display search suggestions - UPDATED FOR NEW STRUCTURE
       function displaySuggestions(results, searchTerm) {
         const suggestionsContainer =
