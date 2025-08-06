@@ -12361,8 +12361,10 @@
 
       // Open Italian dictionary in new tab
       function openDictionary(word) {
+        // For adjectives with both forms (masculine/feminine), use only the masculine form
+        const searchWord = word.includes("/") ? word.split("/")[0] : word;
         const dictionaryUrl = `https://www.dizionario-italiano.it/dizionario-italiano.php?parola=${encodeURIComponent(
-          word
+          searchWord
         )}`;
         window.open(dictionaryUrl, "_blank");
       }
